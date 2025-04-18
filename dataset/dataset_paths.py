@@ -225,7 +225,7 @@ DATASET_PATHS = [
         source='karageorgiou2025',
         family='flux',
         generative_model='flux',
-        order=9
+        order=10
     ),
     dict(
         real_path='data/test/diffusion_datasets/laion',
@@ -233,7 +233,7 @@ DATASET_PATHS = [
         source='karageorgiou2025',
         family='gan',
         generative_model='gigagan',
-        order=9
+        order=11
     ),
     dict(
         real_path='data/test/diffusion_datasets/laion',
@@ -241,7 +241,7 @@ DATASET_PATHS = [
         source='karageorgiou2025',
         family='diffusion',
         generative_model='midjourney-v6.1',
-        order=9
+        order=12
     ),
     dict(
         real_path='data/test/diffusion_datasets/laion',
@@ -249,7 +249,7 @@ DATASET_PATHS = [
         source='karageorgiou2025',
         family='diffusion',
         generative_model='stable-diffusion-3',
-        order=9
+        order=13
     ),
 ]
 

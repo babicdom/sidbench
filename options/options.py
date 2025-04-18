@@ -115,6 +115,8 @@ class EvalOptions():
         parser.add_argument('--defakeBlipPath', type=str,default='./weights/defake/model_base_capfilt_large.pth', help='the path of defake blip model')
         parser.add_argument('--defakeBlip')
 
+        parser.add_argument('--desc', type=str, default='', help='description of the experiment to be shown in the folder name.')
+
         self.initialized = True
 
         return parser

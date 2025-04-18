@@ -36,7 +36,7 @@ def gaussian_blur(img, sigma):
     return Image.fromarray(img)
 
 
-def get_list(path, must_contain='', exts=["png", "jpg", "JPEG", "jpeg", "bmp"]):
+def get_list(path, must_contain='', exts=["png", "jpg", "JPEG", "jpeg", "bmp", "tif", "webp"]):
     image_list = [] 
     for r, _, f in os.walk(path):
         for file in f:
@@ -106,7 +106,7 @@ class SyntheticImagesDataset(Dataset):
 
             random.shuffle(fake_list)
             fake_list = fake_list[0:max_sample] if max_sample < len(fake_list) else fake_list
-
+        print(f"Real: {len(real_list)}, Fake: {len(fake_list)}")
         return real_list, fake_list
     
     def real_len(self):

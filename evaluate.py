@@ -83,6 +83,19 @@ def write_metrics(output_folder, all_metrics):
 
             data_line = f"{key:<{column_widths[0]}} {r_acc_formatted:>{column_widths[1]}} {f_acc_formatted:>{column_widths[2]}} {acc_formatted:>{column_widths[3]}} {best_threshold:>{column_widths[4]}}"
             f.write(data_line + '\n')
+
+    with open( os.path.join(output_folder, 'roc_auc.txt'), 'a') as f:
+        headers = [['Generative', 'AUC'], ['Model', '']]
+        column_widths = [12, 12] 
+
+        for header_names in headers:
+            header_line = f"{header_names[0]:<{column_widths[0]}} {header_names[1]:>{column_widths[1]}}"
+            f.write(header_line + '\n')
+        f.write('-' * sum(column_widths) + '\n')
+        for metrics in all_metrics:
+            key = metrics['generative_model'] if 'generative_model' in metrics and metrics['generative_model'] is not None else 'unknown'
+            auc_formatted = f"{metrics['roc_auc']*100:6.2f}"
+            f.write(f"{key:<{12}} {auc_formatted:>{12}}" + '\n')
     
     curves = [
         {
@@ -123,7 +136,6 @@ def validate(model, loader, device, dataset_length, find_threshold=False):
             pbar.update(len(predictions))
 
     y_true, y_pred = np.array(y_true), np.array(y_pred)
-
     return calculate_performance_metrics(y_true, y_pred, find_threshold)
 
 
@@ -146,7 +158,7 @@ def get_results_path(opt):
     if opt.gaussianSigma is not None:
         components.append(f"gaussian_{opt.gaussianSigma}")
 
-    output_folder = os.path.join(opt.resultFolder, opt.modelName, '_'.join(components))
+    output_folder = os.path.join(opt.resultFolder, opt.modelName + opt.desc, '_'.join(components))
     return output_folder
 
 
@@ -182,6 +194,7 @@ def run_for_model(datasets, model, opt):
         all_metrics.append(metrics)
 
     output_folder = get_results_path(opt)
+    print(f"Results will be saved in {output_folder}")
     write_metrics(output_folder, all_metrics)
 
 

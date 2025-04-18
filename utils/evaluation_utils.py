@@ -47,7 +47,7 @@ def calculate_performance_metrics(y_true, y_pred, find_threshold=False):
     metrics['roc_auc'] = roc_auc_score(y_true, y_pred)
 
     metrics['roc_curve'] = roc_curve(y_true, y_pred, drop_intermediate=True)
-    metrics['precision_recall_curve'] = precision_recall_curve(y_true, y_pred, drop_intermediate=True)
+    metrics['precision_recall_curve'] = precision_recall_curve(y_true, y_pred) #, drop_intermediate=True)
             
     # Acc based on 0.5
     metrics['threshold_05'] = calculate_for_threshold(y_true, y_pred, 0.5)

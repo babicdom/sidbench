@@ -106,11 +106,11 @@ def get_model(opt):
             print("No ncls found")
 
         if ncls == '1class':
-            nproj = 4
-            proj_dim = 1024
+            nproj = 1
+            proj_dim = 256
         elif ncls == '2class':
             nproj = 4
-            proj_dim = 128
+            proj_dim = 512
         elif ncls == '4class':
             nproj = 2
             proj_dim = 1024
@@ -118,6 +118,9 @@ def get_model(opt):
             nproj = 4
             proj_dim = 1024
         model = RineModel(backbone=("ViT-L/14", 1024), nproj=nproj, proj_dim=proj_dim)
+    elif model_name == 'SPAI':
+        # TODO: Implement SPAI model loading
+        raise NotImplementedError("SPAI model loading is not implemented yet.")
 
     model.load_weights(ckpt=opt.ckpt)
     model.eval()
