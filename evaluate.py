@@ -232,6 +232,5 @@ if __name__ == '__main__':
                  family=dp['family'])
             for dp in dataset_paths
         ]
-    
     run_for_model(datasets=datasets, model=model, opt=opt)
 

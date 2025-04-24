@@ -35,7 +35,7 @@ DATASET_PATHS = [
         generative_model='stargan'
     ),
     dict(
-        real_path='data/test/tylegan',    
+        real_path='data/test/stylegan',    
         fake_path='data/test/stylegan',
         source='wang2020',
         family='gan', # Unconditional GAN

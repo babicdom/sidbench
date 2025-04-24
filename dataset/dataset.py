@@ -15,6 +15,14 @@ import random
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+def webp2jpg(img, quality):
+    out = BytesIO()
+    img.save(out, format='jpeg', quality=quality) # ranging from 0-95, 75 is default
+    img = Image.open(out)
+    # load from memory before ByteIO closes
+    img = np.array(img)
+    out.close()
+    return Image.fromarray(img)
 
 def png2jpg(img, quality):
     out = BytesIO()
@@ -51,6 +59,7 @@ class SyntheticImagesDataset(Dataset):
 
         self.jpeg_quality = opt.jpegQuality
         self.gaussian_sigma = opt.gaussianSigma
+        self.webp_quality = opt.webpQuality
         
         self.opt = opt
         self.process_fn = process_fn
@@ -129,6 +138,9 @@ class SyntheticImagesDataset(Dataset):
 
         if self.jpeg_quality is not None:
             img = png2jpg(img, self.jpeg_quality)
+        
+        if self.webp_quality is not None:
+            img = png2jpg(img, self.webp_quality)
 
         return self.process_fn(img, self.opt, label, img_path)
 

@@ -78,6 +78,7 @@ class EvalOptions():
         parser.add_argument('--batchSize', type=int, default=64)
 
         parser.add_argument('--jpegQuality', type=int, default=None, help="100, 90, 80, ... 30. Used to test robustness of our model. Not apply if None")
+        parser.add_argument('--webpQuality', type=int, default=None, help="100, 90, 80, ... 30. Used to test robustness of our model. Not apply if None")
         parser.add_argument('--gaussianSigma', type=int, default=None, help="0,1,2,3,4.     Used to test robustness of our model. Not apply if None")
 
         parser.add_argument('--loadSize', type=int, default=256, help='scale images to this size')
@@ -115,6 +116,11 @@ class EvalOptions():
         parser.add_argument('--defakeBlipPath', type=str,default='./weights/defake/model_base_capfilt_large.pth', help='the path of defake blip model')
         parser.add_argument('--defakeBlip')
 
+        # SPAI
+        parser.add_argument('--originalResolution', type=bool, default=True, help='if True, use original resolution of the image')
+        parser.add_argument('--crop', type=bool, default=True, help='if True, crop the image to the original resolution')
+
+        # additional
         parser.add_argument('--desc', type=str, default='', help='description of the experiment to be shown in the folder name.')
 
         self.initialized = True

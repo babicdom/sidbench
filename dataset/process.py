@@ -320,6 +320,40 @@ def defake_processing(img, opt):
 
     return img
 
+class PadIfNeeded:
+    def __init__(self, min_height, min_width, fill=0, padding_mode='constant'):
+        self.min_height = min_height
+        self.min_width = min_width
+        self.fill = fill
+        self.padding_mode = padding_mode
+
+    def __call__(self, img):
+        # img can be PIL Image or Tensor
+        if isinstance(img, Image.Image):
+            width, height = img.size
+        else:
+            # Tensor shape: C x H x W
+            height, width = img.shape[-2:]
+        pad_top = max((self.min_height - height) // 2, 0)
+        pad_bottom = max(self.min_height - height - pad_top, 0)
+        pad_left = max((self.min_width - width) // 2, 0)
+        pad_right = max(self.min_width - width - pad_left, 0)
+        if pad_top > 0 or pad_bottom > 0 or pad_left > 0 or pad_right > 0:
+            padding = (pad_left, pad_top, pad_right, pad_bottom)
+            return transforms.functional.pad(img, padding, fill=self.fill, padding_mode=self.padding_mode)
+        return img
+
+def spai_processing(img, opt):
+    transforms_list = []
+
+    if opt.originalResolution: 
+        transforms_list.append(PadIfNeeded(min_height=opt.cropSize, min_width=opt.cropSize))
+    if opt.crop:
+        transforms_list.append(transforms.CenterCrop(opt.loadSize))
+    transforms_list.append(transforms.ToTensor())
+    transforms_list.append(transforms.Normalize(mean=0, std=1))
+    transform = transforms.Compose(transforms_list)
+    return transform(img)
 
 def processing(img, opt, label, image_path):
     assert opt.modelName in VALID_MODELS
@@ -360,6 +394,9 @@ def processing(img, opt, label, image_path):
     
     if opt.modelName == 'DeFake':
         return defake_processing(img, opt), label, image_path
+    
+    if opt.modelName == 'SPAI':
+        return spai_processing(img, opt), label, image_path
     
     raise ValueError(f"Model {opt.modelName} not found")
 

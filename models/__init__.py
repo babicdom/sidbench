@@ -10,16 +10,19 @@ from models.DIMD import DIMD
 from models.NPR import NPR
 from models.Dire import Dire
 from models.DeFake import DeFake
+from models.SPAI import build_mf_vit
 
 import re
 import torch
+import yaml
+from yacs.config import CfgNode
 
 from networks.blip.blip import blip_decoder
 from preprocessing.lgrad.models import build_model
 from utils.util import setup_device
 
 
-VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake']
+VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake', 'SPAI']
 
 
 def get_model(opt):
@@ -95,7 +98,7 @@ def get_model(opt):
         model = NPR()
     elif model_name == 'DeFake':
         opt.defakeBlip = blip_decoder(pretrained=opt.defakeBlipPath, image_size=224, vit='base')
-        opt.defakeClipEncoder = torch.load(opt.defakeClipEncoderPath, map_location='cpu')
+        opt.defakeClipEncoder = torch.load(opt.defakeClipEncoderPath, map_location='cpu', weights_only=False)
         model = DeFake(blip=opt.defakeBlip, encoder=opt.defakeClipEncoder)
     elif model_name == 'Rine':
         pattern = r'model_([^_]*)_trainable'
@@ -119,9 +122,14 @@ def get_model(opt):
             proj_dim = 1024
         model = RineModel(backbone=("ViT-L/14", 1024), nproj=nproj, proj_dim=proj_dim)
     elif model_name == 'SPAI':
-        # TODO: Implement SPAI model loading
-        raise NotImplementedError("SPAI model loading is not implemented yet.")
-
+        # opt.cropSize = 256
+        config = torch.load(opt.ckpt, map_location='cpu', weights_only=False)["config"]
+        # with open('weights/spai/spai.yaml', 'r') as stream:
+        #     try:
+        #         config = CfgNode(yaml.safe_load(stream))
+        #     except yaml.YAMLError as exc:
+        #         print(exc)
+        model = build_mf_vit(config)
     model.load_weights(ckpt=opt.ckpt)
     model.eval()
     model = model.to(device)
