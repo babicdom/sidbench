@@ -1,5 +1,6 @@
 import torch
-
+from typing import Iterable
+import numpy as np
 
 # PSM
 def patch_collate(batch):
@@ -13,3 +14,14 @@ def patch_collate(batch):
         return [input_img, cropped_img, scale], target, filename
     except Exception as e:
         raise ValueError('Error in patch_collate: ' + str(e))
+    
+# SPAI
+def image_enlisting_collate_fn(
+    batch: Iterable[tuple[torch.Tensor, np.ndarray, int]]
+) -> tuple[list[torch.Tensor], torch.Tensor, torch.Tensor]:
+    """Collate function that enlists its entries."""
+    return (
+        [torch.utils.data.default_collate([s[0]]) for s in batch],
+        torch.utils.data.default_collate([s[1] for s in batch]),
+        [s[2] for s in batch]
+    )

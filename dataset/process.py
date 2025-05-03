@@ -346,10 +346,10 @@ class PadIfNeeded:
 def spai_processing(img, opt):
     transforms_list = []
 
-    if opt.originalResolution: 
-        transforms_list.append(PadIfNeeded(min_height=opt.cropSize, min_width=opt.cropSize))
-    if opt.crop:
-        transforms_list.append(transforms.CenterCrop(opt.loadSize))
+    if opt.loadSize is not None:
+        transforms_list.append(PadIfNeeded(min_height=opt.loadSize, min_width=opt.loadSize))
+    if opt.cropSize is not None:
+        transforms_list.append(transforms.CenterCrop(opt.cropSize))
     transforms_list.append(transforms.ToTensor())
     transforms_list.append(transforms.Normalize(mean=0, std=1))
     transform = transforms.Compose(transforms_list)
@@ -397,6 +397,10 @@ def processing(img, opt, label, image_path):
     
     if opt.modelName == 'SPAI':
         return spai_processing(img, opt), label, image_path
+    
+    if opt.modelName == 'CLIPformer' or opt.modelName == 'CLIPatch':
+        return clip_processing(img, opt), label, image_path
+
     
     raise ValueError(f"Model {opt.modelName} not found")
 

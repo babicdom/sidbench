@@ -17,7 +17,6 @@
 import dataclasses
 from functools import partial
 import pathlib
-from networks.clip import clip
 from typing import Optional, Union
 
 import numpy as np
@@ -34,165 +33,6 @@ from scipy import interpolate
 from networks import vision_transformer_spai as vision_transformer
 from utils import filters
 from utils.util import save_image_with_attention_overlay
-
-CLIP_MEAN: tuple[float, ...] = (0.48145466, 0.4578275, 0.40821073)
-CLIP_STD: tuple[float, ...] = (0.26862954, 0.26130258, 0.27577711)
-
-
-class Hook:
-    def __init__(self, name, module):
-        self.name = name
-        self.hook = module.register_forward_hook(self.hook_fn)
-
-    def hook_fn(self, module, input, output):
-        self.input = input
-        self.output = output
-
-    def close(self):
-        self.hook.remove()
-
-
-class CLIPBackbone(nn.Module):
-    def __init__(
-        self,
-        clip_model: str = "ViT-B/16",
-        device: str = "cpu"
-    ) -> None:
-        super().__init__()
-
-        # Load and freeze CLIP
-        self.clip, self.preprocess = clip.load(clip_model, device=device)
-        # self.clip = self.clip.float()
-        for name, param in self.clip.named_parameters():
-            param.requires_grad = False
-
-        # Register hooks to get intermediate layer outputs
-        self.hooks = [
-            Hook(name, module)
-            for name, module in self.clip.visual.named_modules()
-            if "ln_2" in name
-        ]
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Processes a batch of images using a CLIP backbone and returns intermediate layers."""
-        # Make sure that the parameters of LayerNorm are always in FP32, even during FP16
-        # training. Otherwise, it will crash, since clip utilizes a custom LayerNorm that
-        # always converts the input to LayerNorm to FP32.
-        if self.clip.visual.transformer.resblocks[1].ln_1.weight.dtype != torch.float32:
-            for m in self.clip.modules():
-                if isinstance(m, clip.model.LayerNorm):
-                    m.float()
-
-        self.clip.encode_image(x)
-        x = torch.stack([h.output for h in self.hooks], dim=2)[1:, :, :, :]
-        x = torch.permute(x, (1, 2, 0, 3))
-
-        return x
-
-
-class DINOv2Backbone(nn.Module):
-    def __init__(
-        self,
-        dinov2_model: str = "dinov2_vitb14",
-        intermediate_layers: tuple[int, ...] = tuple((i for i in range(12)))
-    ) -> None:
-        super().__init__()
-
-        # Initialize DINOv2 pretrained model.
-        self.dino = torch.hub.load("facebookresearch/dinov2", dinov2_model)
-        self.intermediate_layers: tuple[int, ...] = intermediate_layers
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        input_dtype = x.dtype
-        x: tuple[torch.Tensor] = self.dino.get_intermediate_layers(x, self.intermediate_layers)
-        x: torch.Tensor = torch.stack(x, dim=1)
-        x = x.to(input_dtype)
-        return x
-
-# --------------------------------------------------------
-# 2D sine-cosine position embedding
-# References:
-# Transformer: https://github.com/tensorflow/models/blob/master/official/nlp/transformer/model_utils.py
-# MoCo v3: https://github.com/facebookresearch/moco-v3
-# --------------------------------------------------------
-def get_2d_sincos_pos_embed(embed_dim, grid_size, cls_token=False):
-    """
-    grid_size: int of the grid height and width
-    return:
-    pos_embed: [grid_size*grid_size, embed_dim] or [1+grid_size*grid_size, embed_dim] (w/ or w/o cls_token)
-    """
-    grid_h = np.arange(grid_size, dtype=np.float32)
-    grid_w = np.arange(grid_size, dtype=np.float32)
-    grid = np.meshgrid(grid_w, grid_h)  # here w goes first
-    grid = np.stack(grid, axis=0)
-
-    grid = grid.reshape([2, 1, grid_size, grid_size])
-    pos_embed = get_2d_sincos_pos_embed_from_grid(embed_dim, grid)
-    if cls_token:
-        pos_embed = np.concatenate([np.zeros([1, embed_dim]), pos_embed], axis=0)
-    return pos_embed
-
-
-def get_2d_sincos_pos_embed_from_grid(embed_dim, grid):
-    assert embed_dim % 2 == 0
-
-    # use half of dimensions to encode grid_h
-    emb_h = get_1d_sincos_pos_embed_from_grid(embed_dim // 2, grid[0])  # (H*W, D/2)
-    emb_w = get_1d_sincos_pos_embed_from_grid(embed_dim // 2, grid[1])  # (H*W, D/2)
-
-    emb = np.concatenate([emb_h, emb_w], axis=1) # (H*W, D)
-    return emb
-
-
-def get_1d_sincos_pos_embed_from_grid(embed_dim, pos):
-    """
-    embed_dim: output dimension for each position
-    pos: a list of positions to be encoded: size (M,)
-    out: (M, D)
-    """
-    assert embed_dim % 2 == 0
-    omega = np.arange(embed_dim // 2, dtype=np.float)
-    omega /= embed_dim / 2.
-    omega = 1. / 10000**omega  # (D/2,)
-
-    pos = pos.reshape(-1)  # (M,)
-    out = np.einsum('m,d->md', pos, omega)  # (M, D/2), outer product
-
-    emb_sin = np.sin(out) # (M, D/2)
-    emb_cos = np.cos(out) # (M, D/2)
-
-    emb = np.concatenate([emb_sin, emb_cos], axis=1)  # (M, D)
-    return emb
-
-
-# --------------------------------------------------------
-# Interpolate position embeddings for high-resolution
-# References:
-# DeiT: https://github.com/facebookresearch/deit
-# --------------------------------------------------------
-def interpolate_pos_embed(model, checkpoint_model):
-    if 'pos_embed' in checkpoint_model:
-        pos_embed_checkpoint = checkpoint_model['pos_embed']
-        embedding_size = pos_embed_checkpoint.shape[-1]
-        num_patches = model.patch_embed.num_patches
-        num_extra_tokens = model.pos_embed.shape[-2] - num_patches
-        # height (== width) for the checkpoint position embedding
-        orig_size = int((pos_embed_checkpoint.shape[-2] - num_extra_tokens) ** 0.5)
-        # height (== width) for the new position embedding
-        new_size = int(num_patches ** 0.5)
-        # class_token and dist_token are kept unchanged
-        if orig_size != new_size:
-            print("Position interpolate from %dx%d to %dx%d" % (orig_size, orig_size, new_size, new_size))
-            extra_tokens = pos_embed_checkpoint[:, :num_extra_tokens]
-            # only the position tokens are interpolated
-            pos_tokens = pos_embed_checkpoint[:, num_extra_tokens:]
-            pos_tokens = pos_tokens.reshape(-1, orig_size, orig_size, embedding_size).permute(0, 3, 1, 2)
-            pos_tokens = torch.nn.functional.interpolate(
-                pos_tokens, size=(new_size, new_size), mode='bicubic', align_corners=False)
-            pos_tokens = pos_tokens.permute(0, 2, 3, 1).flatten(1, 2)
-            new_pos_embed = torch.cat((extra_tokens, pos_tokens), dim=1)
-            checkpoint_model['pos_embed'] = new_pos_embed
-
 
 def patchify_image(
     img: torch.Tensor,
@@ -215,35 +55,6 @@ def patchify_image(
     img = img.view(img.size(0), -1, img.size(3), kh, kw)
     return img
 
-
-class ExportableImageNormalization(nn.Module):
-    """Layer that normalizes an image, like `torchvision.transforms.Normalize`.
-
-    The intention of building this class is that `torchvision.transforms.Normalize`
-    includes conditional logic that exporters cannot export,
-    like torch.onnx.dynamo_export.
-    Thus, this class practically applies
-    an (`x` - `mean`) / `std `operation without further checks.
-    """
-
-    def __init__(self, mean: tuple[float, ...], std: tuple[float, ...]) -> None:
-        super().__init__()
-        self.mean: tuple[float, ...] = mean
-        self.std: tuple[float, ...] = std
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        :param x: A tensor of shape B x C x H x W.
-        """
-        dtype = x.dtype
-        device = x.device
-        mean = torch.as_tensor(self.mean, dtype=dtype, device=device)
-        std = torch.as_tensor(self.std, dtype=dtype, device=device)
-        mean = mean.view(-1, 1, 1)
-        std = std.view(-1, 1, 1)
-        return x.sub_(mean).div_(std)
-
-
 def exportable_std(x: torch.Tensor, dim: int) -> torch.Tensor:
     """Standard deviation operation exportable to ONNx.
 
@@ -256,12 +67,11 @@ def exportable_std(x: torch.Tensor, dim: int) -> torch.Tensor:
     return  torch.sqrt(torch.pow(x-m, 2).sum(dim) / (x.size(dim) - 1)) # apply Bessel’s correction
 
 
+# MAIN MODEL CLASS
 class PatchBasedMFViT(nn.Module):
     def __init__(
         self,
-        vit: Union[vision_transformer.VisionTransformer,
-                   CLIPBackbone,
-                   DINOv2Backbone],
+        vit: vision_transformer.VisionTransformer,
         features_processor: 'FrequencyRestorationEstimator',
         cls_head: Optional[nn.Module],
         masking_radius: int,
@@ -352,7 +162,10 @@ class PatchBasedMFViT(nn.Module):
 
         return x
     
-    def predict(self, x: Union[torch.Tensor, list[torch.Tensor]]) -> torch.Tensor:
+    def predict(
+            self,
+            x: Union[torch.Tensor, list[torch.Tensor]],
+        ) -> torch.Tensor:
         """Predicts the class of an image.
 
         :param x: B x C x H x W
@@ -595,9 +408,7 @@ class MFViT(nn.Module):
     """Model that constructs features according to the ability to restore missing frequencies."""
     def __init__(
         self,
-        vit: Union[vision_transformer.VisionTransformer,
-                   CLIPBackbone,
-                   DINOv2Backbone],
+        vit: vision_transformer.VisionTransformer,
         features_processor: 'FrequencyRestorationEstimator',
         cls_head: Optional[nn.Module],
         masking_radius: int,
@@ -629,16 +440,10 @@ class MFViT(nn.Module):
             requires_grad=False
         )
 
-        if (isinstance(self.vit, vision_transformer.VisionTransformer)
-                or isinstance(self.vit, DINOv2Backbone)):
+        if (isinstance(self.vit, vision_transformer.VisionTransformer)):
             # ImageNet normalization
             self.backbone_norm = transforms.Normalize(
                 mean=IMAGENET_DEFAULT_MEAN, std=IMAGENET_DEFAULT_STD
-            )
-        elif isinstance(self.vit, CLIPBackbone):
-            # CLIP normalization
-            self.backbone_norm = transforms.Normalize(
-                mean=CLIP_MEAN, std=CLIP_STD
             )
         else:
             raise TypeError(f"Unsupported backbone type: {type(vit)}")
@@ -679,7 +484,7 @@ class MFViT(nn.Module):
     def predict(self, x: torch.Tensor) -> torch.Tensor:
         with torch.no_grad():
             x = self.forward(x)
-        return x
+            return x.sigmoid().flatten().cpu().numpy()
 
     def forward_with_export(self, x: torch.Tensor, export_file: pathlib.Path) -> torch.Tensor:
         """Forward pass of a batch of images.
@@ -1031,12 +836,8 @@ def build_mf_vit(config) -> MFViT:
         proj_last_layer_activation_type=config.MODEL.FRE.PROJECTOR_LAST_LAYER_ACTIVATION_TYPE,
         original_image_features_branch=config.MODEL.FRE.ORIGINAL_IMAGE_FEATURES_BRANCH,
         dropout=config.MODEL.SID_DROPOUT,
-        # disable_reconstruction_similarity=config.MODEL.FRE.DISABLE_RECONSTRUCTION_SIMILARITY
     )
     cls_vector_dim: int = 6 * len(config.MODEL.VIT.INTERMEDIATE_LAYERS)
-    # if (config.MODEL.FRE.ORIGINAL_IMAGE_FEATURES_BRANCH
-    #         and config.MODEL.FRE.DISABLE_RECONSTRUCTION_SIMILARITY):
-    #     cls_vector_dim = config.MODEL.VIT.PROJECTION_DIM
     if config.MODEL.FRE.ORIGINAL_IMAGE_FEATURES_BRANCH:
         cls_vector_dim += config.MODEL.VIT.PROJECTION_DIM
 

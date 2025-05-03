@@ -5,7 +5,7 @@ from numpyencoder import NumpyEncoder
 
 from dataset.dataset import SyntheticImagesDataset
 from dataset.dataset_paths import DATASET_PATHS
-from dataset import patch_collate
+from dataset import patch_collate, image_enlisting_collate_fn
 
 import shutil
 
@@ -125,7 +125,7 @@ def validate(model, loader, device, dataset_length, find_threshold=False):
                     # i.to(device) if isinstance(i, torch.Tensor) else [j.to(device) for j in i]
                     i.to(device) if isinstance(i, torch.Tensor) else i for i in img
                 ]
-                predictions = model.predict(*img)
+                predictions = model.predict(img) # predictions = model.predict(*img)
             else:
                 img = img.to(device) 
                 predictions = model.predict(img)    
@@ -166,11 +166,16 @@ def get_results_path(opt):
 def run_for_model(datasets, model, opt):
     device = setup_device(opt.gpus)
 
-    collate_fn = patch_collate if opt.modelName == 'Fusing' else None
+    if opt.modelName == 'Fusing':
+        collate_fn = patch_collate 
+    elif opt.modelName == 'SPAI':
+        collate_fn = image_enlisting_collate_fn
+    else:
+        collate_fn = None
 
     all_metrics = []
     for dataset_params in datasets:
-        set_random_seed()
+        set_random_seed(SEED)
 
         data_paths = dataset_params['data_paths']
         dataset = SyntheticImagesDataset(data_paths=data_paths, opt=opt, process_fn=processing)
@@ -185,7 +190,6 @@ def run_for_model(datasets, model, opt):
                                              shuffle=False, 
                                              num_workers=opt.numThreads,
                                              collate_fn=collate_fn)
-
         metrics = validate(model, loader, device, dataset_length=dataset_length, find_threshold=True)
         metrics['source'] = dataset_params['source'] if 'source' in dataset_params else 'unknown'
         metrics['generative_model'] = dataset_params['generative_model'] if 'generative_model' in dataset_params else 'unknown'

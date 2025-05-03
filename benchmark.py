@@ -7,19 +7,19 @@ from dataset.dataset_paths import DATASET_PATHS
 
 from evaluate import run_for_model
 
-from options import TestOptions
+from options import TestOptions, EvalOptions
 from utils.util import set_random_seed
 
 SEED = 0
 
-JPEG_QUALITY = [95, 90, 50, 30]
+JPEG_QUALITY = [95, 75, 50, 25]
 GAUSSIAN_SIGMA = [2, 4]
 
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser = TestOptions().initialize(parser)
+    parser = EvalOptions().initialize(parser)
 
     opt = parser.parse_args()
 
@@ -37,6 +37,7 @@ if __name__ == '__main__':
 
         opt.modelName = model_params['modelName']
         opt.ckpt = model_params['ckpt']
+        opt.desc = model_params.get('desc', '')
         
         model = get_model(opt)
 
@@ -45,19 +46,21 @@ if __name__ == '__main__':
         opt.jpegQuality = None
         run_for_model(datasets=datasets, model=model, opt=opt)
 
-        for jpeg_quality in JPEG_QUALITY:
-            print('\tjpeg_quality: ', jpeg_quality)
-            opt.gaussianSigma = None
-            opt.jpegQuality = jpeg_quality
-            run_for_model(datasets=datasets, model=model, opt=opt)
+        if opt.testJPEGQuality:
+            for jpeg_quality in JPEG_QUALITY:
+                print('\tjpeg_quality: ', jpeg_quality)
+                opt.gaussianSigma = None
+                opt.jpegQuality = jpeg_quality
+                run_for_model(datasets=datasets, model=model, opt=opt)
         
-        for gaussian_sigma in GAUSSIAN_SIGMA:
-            print('\tgaussian_sigma: ', gaussian_sigma)
-            opt.gaussianSigma = gaussian_sigma
-            opt.jpegQuality = None
-            run_for_model(datasets=datasets, model=model, opt=opt)
+        if opt.testGaussianSigma:
+            for gaussian_sigma in GAUSSIAN_SIGMA:
+                print('\tgaussian_sigma: ', gaussian_sigma)
+                opt.gaussianSigma = gaussian_sigma
+                opt.jpegQuality = None
+                run_for_model(datasets=datasets, model=model, opt=opt)
         
-        print('\tjpeg_quality: ', 50, 'gaussian_sigma: ', 2)
-        opt.gaussianSigma = 2
-        opt.jpegQuality = 50
-        run_for_model(datasets=datasets, model=model, opt=opt)
+        # print('\tjpeg_quality: ', 50, 'gaussian_sigma: ', 2)
+        # opt.gaussianSigma = 2
+        # opt.jpegQuality = 50
+        # run_for_model(datasets=datasets, model=model, opt=opt)

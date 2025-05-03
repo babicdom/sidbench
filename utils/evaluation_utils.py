@@ -59,5 +59,7 @@ def calculate_performance_metrics(y_true, y_pred, find_threshold=False):
     metrics['best_threshold'] = find_best_acc_threshold(y_true, y_pred)
     metrics['oracle_threshold'] = calculate_for_threshold(y_true, y_pred, metrics['best_threshold'])
 
+    print(f"ACC / AP / AUC: {metrics['oracle_threshold']['acc']*100:1.2f} / {metrics['ap']*100:1.2f} / {metrics['roc_auc']*100:1.2f}")
+
     return metrics
 

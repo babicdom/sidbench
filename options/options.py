@@ -51,6 +51,13 @@ class TestOptions():
         parser.add_argument('--defakeBlipPath', type=str,default='./weights/defake/model_base_capfilt_large.pth', help='the path of defake blip model')
         parser.add_argument('--defakeBlip')
 
+        # SPAI
+        parser.add_argument('--originalResolution', type=bool, default=True, help='if True, use original resolution of the image')
+        parser.add_argument('--crop', type=bool, default=True, help='if True, crop the image to the original resolution')
+
+        # additional
+        parser.add_argument('--desc', type=str, default='', help='description of the experiment to be shown in the folder name.')
+
         self.initialized = True
         
         return parser
@@ -75,7 +82,7 @@ class EvalOptions():
 
         parser.add_argument('--resultFolder', type=str, default='test_results', help='')
         
-        parser.add_argument('--batchSize', type=int, default=64)
+        parser.add_argument('--batchSize', type=int, default=16)
 
         parser.add_argument('--jpegQuality', type=int, default=None, help="100, 90, 80, ... 30. Used to test robustness of our model. Not apply if None")
         parser.add_argument('--webpQuality', type=int, default=None, help="100, 90, 80, ... 30. Used to test robustness of our model. Not apply if None")
@@ -90,6 +97,8 @@ class EvalOptions():
         parser.add_argument('--numThreads', default=4, type=int, help='# threads for loading data')
 
         parser.add_argument('--isTrain', default=False, type=bool, help='train or test')
+        parser.add_argument('--testJPEGQuality', default=False, action='store_true', help='if specified, test the model with different jpeg quality')
+        parser.add_argument('--testGaussianSigma', default=False, action='store_true', help='if specified, test the model with different gaussian sigma')
 
         # additional parameters
 
@@ -117,8 +126,7 @@ class EvalOptions():
         parser.add_argument('--defakeBlip')
 
         # SPAI
-        parser.add_argument('--originalResolution', type=bool, default=True, help='if True, use original resolution of the image')
-        parser.add_argument('--crop', type=bool, default=True, help='if True, crop the image to the original resolution')
+        parser.add_argument('--crop', type=bool, default=False, help='if True, crop the image to the original resolution')
 
         # additional
         parser.add_argument('--desc', type=str, default='', help='description of the experiment to be shown in the folder name.')
