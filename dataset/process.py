@@ -26,6 +26,28 @@ STD = {
     "clip":[0.26862954, 0.26130258, 0.27577711] 
 }
 
+class PadIfNeeded:
+    def __init__(self, min_height, min_width, fill=0, padding_mode='constant'):
+        self.min_height = min_height
+        self.min_width = min_width
+        self.fill = fill
+        self.padding_mode = padding_mode
+
+    def __call__(self, img):
+        # img can be PIL Image or Tensor
+        if isinstance(img, Image.Image):
+            width, height = img.size
+        else:
+            # Tensor shape: C x H x W
+            height, width = img.shape[-2:]
+        pad_top = max((self.min_height - height) // 2, 0)
+        pad_bottom = max(self.min_height - height - pad_top, 0)
+        pad_left = max((self.min_width - width) // 2, 0)
+        pad_right = max(self.min_width - width - pad_left, 0)
+        if pad_top > 0 or pad_bottom > 0 or pad_left > 0 or pad_right > 0:
+            padding = (pad_left, pad_top, pad_right, pad_bottom)
+            return transforms.functional.pad(img, padding, fill=self.fill, padding_mode=self.padding_mode)
+        return img
 
 def psm_processing(img, opt):
     height, width = img.height, img.width
@@ -103,7 +125,7 @@ def resnet_processing(img, opt):
 
 
 def clip_processing(img, opt):
-    transformations = []
+    transformations = [PadIfNeeded(min_height=opt.imgSize, min_width=opt.imgSize)]
 
     if opt.loadSize:
         transformations.append(transforms.Resize(size=(opt.loadSize, opt.loadSize)))
@@ -320,34 +342,11 @@ def defake_processing(img, opt):
 
     return img
 
-class PadIfNeeded:
-    def __init__(self, min_height, min_width, fill=0, padding_mode='constant'):
-        self.min_height = min_height
-        self.min_width = min_width
-        self.fill = fill
-        self.padding_mode = padding_mode
-
-    def __call__(self, img):
-        # img can be PIL Image or Tensor
-        if isinstance(img, Image.Image):
-            width, height = img.size
-        else:
-            # Tensor shape: C x H x W
-            height, width = img.shape[-2:]
-        pad_top = max((self.min_height - height) // 2, 0)
-        pad_bottom = max(self.min_height - height - pad_top, 0)
-        pad_left = max((self.min_width - width) // 2, 0)
-        pad_right = max(self.min_width - width - pad_left, 0)
-        if pad_top > 0 or pad_bottom > 0 or pad_left > 0 or pad_right > 0:
-            padding = (pad_left, pad_top, pad_right, pad_bottom)
-            return transforms.functional.pad(img, padding, fill=self.fill, padding_mode=self.padding_mode)
-        return img
-
 def spai_processing(img, opt):
     transforms_list = []
 
-    if opt.loadSize is not None:
-        transforms_list.append(PadIfNeeded(min_height=opt.loadSize, min_width=opt.loadSize))
+    if opt.imgSize is not None:
+        transforms_list.append(PadIfNeeded(min_height=opt.imgSize, min_width=opt.imgSize))
     if opt.cropSize is not None:
         transforms_list.append(transforms.CenterCrop(opt.cropSize))
     transforms_list.append(transforms.ToTensor())

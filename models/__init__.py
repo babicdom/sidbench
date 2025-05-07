@@ -110,11 +110,11 @@ def get_model(opt):
             print("No ncls found")
 
         if ncls == '1class':
-            nproj = 1
-            proj_dim = 256
+            nproj = 4
+            proj_dim = 1024
         elif ncls == '2class':
             nproj = 4
-            proj_dim = 512
+            proj_dim = 128
         elif ncls == '4class':
             nproj = 2
             proj_dim = 1024

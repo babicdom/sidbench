@@ -38,20 +38,34 @@ MODELS = [
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/freqdetect/DCTAnalysis.pth"
     # },
-    # {
-    #     "modelName": "Rine",
-    #     "trainedOn": "progan",
-    #     "ckpt": "./weights/rine_original/model_1class_trainable.pth",
-    #     "ncls": "1class",
-    #     "desc": "_progan"
-    # },
-    # {
-    #     "modelName": "Rine",
-    #     "trainedOn": "latent_diffusion",
-    #     "ckpt": "./weights/rine_original/model_ldm_trainable.pth",
-    #     "ncls": "ldm",
-    #     "desc": "_latent_diffusion"
-    # },
+    {
+        "modelName": "Rine",
+        "trainedOn": "progan",
+        "ckpt": "./weights/rine_original/model_1class_trainable.pth",
+        "ncls": "1class",
+        "desc": "_1_class"
+    },
+    {
+        "modelName": "Rine",
+        "trainedOn": "latent_diffusion",
+        "ckpt": "./weights/rine_original/model_2class_trainable.pth",
+        "ncls": "2class",
+        "desc": "_2_class"
+    },
+    {
+        "modelName": "Rine",
+        "trainedOn": "progan",
+        "ckpt": "./weights/rine_original/model_4class_trainable.pth",
+        "ncls": "4class",
+        "desc": "_4_class"
+    },
+    {
+        "modelName": "Rine",
+        "trainedOn": "latent_diffusion",
+        "ckpt": "./weights/rine_original/model_ldm_trainable.pth",
+        "ncls": "ldm",
+        "desc": "_latent_diffusion"
+    },
     # {
     #     "modelName": "NPR",
     #     "trainedOn": "progan",
@@ -77,11 +91,11 @@ MODELS = [
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/gramnet/Gram.pth"
     # },
-    {
-        "modelName": "SPAI",
-        "trainedOn": "progan",
-        "ckpt": "./weights/spai/spai.pth"
-    },
+    # {
+    #     "modelName": "SPAI",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/spai/spai.pth"
+    # },
     # {
     #     "modelName": "CLIPformer",
     #     "trainedOn": "progan",

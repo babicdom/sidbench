@@ -96,6 +96,21 @@ def write_metrics(output_folder, all_metrics):
             key = metrics['generative_model'] if 'generative_model' in metrics and metrics['generative_model'] is not None else 'unknown'
             auc_formatted = f"{metrics['roc_auc']*100:6.2f}"
             f.write(f"{key:<{12}} {auc_formatted:>{12}}" + '\n')
+
+    with open( os.path.join(output_folder, 'metrics.txt'), 'a') as f:
+        headers = [['Generative', 'ACC', 'AP', 'AUC'], ['Model', '', '', '']]
+        column_widths = [12, 12] 
+
+        for header_names in headers:
+            header_line = f"{header_names[0]:<{column_widths[0]}} {header_names[1]:>{column_widths[1]}}"
+            f.write(header_line + '\n')
+        f.write('-' * sum(column_widths) + '\n')
+        for metrics in all_metrics:
+            key = metrics['generative_model'] if 'generative_model' in metrics and metrics['generative_model'] is not None else 'unknown'
+            auc_formatted = f"{metrics['roc_auc']*100:6.2f}"
+            acc_formatted = f"{metrics['oracle_threshold']['acc']*100:6.2f}"
+            ap_formatted = f"{metrics['ap']*100:6.2f}"
+            f.write(f"{key:<{12}} {acc_formatted:>{12}} {ap_formatted:>{12}} {auc_formatted:>{12}}" + '\n')
     
     curves = [
         {

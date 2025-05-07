@@ -1,0 +1,16 @@
+Generative            AUC
+Model                    
+------------------------
+glide               87.61
+dalle2              88.92
+stable-diffusion-1-3        99.70
+stable-diffusion-1-4        99.72
+midjourney-v5        93.32
+dalle3              87.59
+stable-diffusion-2        95.76
+stable-diffusion-xl        96.81
+firefly             94.64
+flux                86.12
+gigagan             87.79
+midjourney-v6.1        86.72
+stable-diffusion-3        80.95

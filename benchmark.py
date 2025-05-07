@@ -7,7 +7,7 @@ from dataset.dataset_paths import DATASET_PATHS
 
 from evaluate import run_for_model
 
-from options import TestOptions, EvalOptions
+from options import EvalOptions
 from utils.util import set_random_seed
 
 SEED = 0
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     for model_params in MODELS:
         set_random_seed()
-        print('Model: ', model_params['modelName'])
+        print('Model: ', model_params['modelName'] if 'desc' not in model_params else model_params['modelName'] + model_params['desc'])
 
         opt.modelName = model_params['modelName']
         opt.ckpt = model_params['ckpt']

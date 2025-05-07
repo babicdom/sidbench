@@ -69,6 +69,8 @@ class EvalOptions():
         self.initialized = False
 
     def initialize(self, parser):
+        parser.add_argument('--testJPEGQuality', default=False, action='store_true', help='if specified, test the model with different jpeg quality')
+        parser.add_argument('--testGaussianSigma', default=False, action='store_true', help='if specified, test the model with different gaussian sigma')
         parser.add_argument('--realPath', type=str, default=None, help='dir name of reals')
         parser.add_argument('--fakePath', type=str, default=None, help='dir name of fakes')
         parser.add_argument('--dataPath', type=str, default=None, help='dir name of all data')
@@ -88,7 +90,8 @@ class EvalOptions():
         parser.add_argument('--webpQuality', type=int, default=None, help="100, 90, 80, ... 30. Used to test robustness of our model. Not apply if None")
         parser.add_argument('--gaussianSigma', type=int, default=None, help="0,1,2,3,4.     Used to test robustness of our model. Not apply if None")
 
-        parser.add_argument('--loadSize', type=int, default=256, help='scale images to this size')
+        parser.add_argument('--loadSize', type=int, default=None, help='scale images to this size')
+        parser.add_argument('--imgSize', type=int, default=256, help='Padd images to this size')
         parser.add_argument('--cropSize', type=int, default=224, help='crop images to this size')
         parser.add_argument('--noResize', default=False, action='store_true')
         parser.add_argument('--noCrop', default=False, action='store_true')
@@ -97,8 +100,6 @@ class EvalOptions():
         parser.add_argument('--numThreads', default=4, type=int, help='# threads for loading data')
 
         parser.add_argument('--isTrain', default=False, type=bool, help='train or test')
-        parser.add_argument('--testJPEGQuality', default=False, action='store_true', help='if specified, test the model with different jpeg quality')
-        parser.add_argument('--testGaussianSigma', default=False, action='store_true', help='if specified, test the model with different gaussian sigma')
 
         # additional parameters
 
