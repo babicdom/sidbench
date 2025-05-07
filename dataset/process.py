@@ -397,7 +397,7 @@ def processing(img, opt, label, image_path):
     if opt.modelName == 'SPAI':
         return spai_processing(img, opt), label, image_path
     
-    if opt.modelName == 'CLIPformer' or opt.modelName == 'CLIPatch':
+    if opt.modelName == 'CLIPformer' or opt.modelName == 'CLIPatch' or opt.modelName == 'IntermediatePatch':
         return clip_processing(img, opt), label, image_path
 
     

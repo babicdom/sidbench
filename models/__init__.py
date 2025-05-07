@@ -11,7 +11,7 @@ from models.NPR import NPR
 from models.Dire import Dire
 from models.DeFake import DeFake
 from models.SPAI import build_mf_vit, remap_pretrained_keys_vit
-from models.CLIPformer import CLIPformer, CLIPatch
+from models.CLIPformer import CLIPformer, CLIPatch, IntermediatePatch
 
 import re
 import torch
@@ -23,7 +23,7 @@ from preprocessing.lgrad.models import build_model
 from utils.util import setup_device
 
 
-VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake', 'SPAI', 'CLIPformer', 'CLIPatch']
+VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake', 'SPAI', 'CLIPformer', 'CLIPatch', 'IntermediatePatch']
 
 
 def get_model(opt):
@@ -142,7 +142,7 @@ def get_model(opt):
         )
     elif model_name == 'CLIPatch':
         experiment = pickle.load(
-            open(f"weights/CLIPatch/4layers_8heads_all_classes/experiment.pickle", "rb")
+            open(f"weights/IntermediatePatch/4layers_8heads_all_classes/experiment.pickle", "rb")
         )
         model = CLIPatch(
             backbone=experiment["backbone"],
@@ -151,6 +151,16 @@ def get_model(opt):
             n_heads=experiment["n_heads"],
             mlp_dim=experiment["mlp_dim"],
             att_dim=experiment["att_dim"],
+        )
+    elif model_name == 'IntermediatePatch':
+        experiment = pickle.load(
+            open(f"weights/IntermediatePatch/experiment.pickle", "rb")
+        )
+        model = IntermediatePatch(
+            backbone=experiment["backbone"],
+            device=device,
+            nproj=experiment["nproj"],
+            proj_dim=experiment["proj_dim"],
         )
     model.load_weights(ckpt=opt.ckpt)
     model.eval()

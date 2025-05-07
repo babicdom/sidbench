@@ -1,0 +1,37 @@
+Generative            AUC
+Model                    
+------------------------
+biggan              99.94
+cyclegan            99.98
+gaugan             100.00
+progan             100.00
+stargan             99.95
+stylegan            99.05
+stylegan2           99.72
+deepfake            97.25
+crn                 98.46
+imle                99.91
+san                 91.39
+sitd                95.46
+whichfaceisreal        98.83
+dalle               99.47
+glide_100_10        99.45
+glide_100_27        99.32
+glide_50_27         99.55
+guided              96.04
+ldm_100             99.90
+ldm_200             99.83
+ldm_200_cfg         98.35
+glide               30.87
+dalle2              63.05
+stable-diffusion-1-3        74.31
+stable-diffusion-1-4        75.15
+midjourney-v5        24.18
+dalle3               2.85
+stable-diffusion-2        55.40
+stable-diffusion-xl        50.54
+firefly             85.31
+flux                72.28
+gigagan             99.59
+midjourney-v6.1        92.70
+stable-diffusion-3        46.67
