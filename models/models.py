@@ -29,6 +29,11 @@ MODELS = [
     #     "desc": "stylegan2"
     # },
     # {
+    #     "modelName": "DeFake",
+    #     "trainedOn": "SD",
+    #     "ckpt": "./weights/defake/clip_linear.pth",
+    # },
+    # {
     #     "modelName": "LGrad",
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/lgrad/LGrad.pth"
@@ -91,20 +96,20 @@ MODELS = [
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/gramnet/Gram.pth"
     # },
-    {
-        "modelName": "SPAI",
-        "trainedOn": "progan",
-        "ckpt": "./weights/spai/spai.pth"
-    },
+    # {
+    #     "modelName": "SPAI",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/spai/spai.pth"
+    # },
     # {
     #     "modelName": "CLIPformer",
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/CLIPformer/train.pth"
     # },
-    # {
-    #     "modelName": "IntermediatePatch",
-    #     "trainedOn": "progan",
-    #     "ckpt": "./weights/IntermediatePatch/train.pth"
-    # }
+    {
+        "modelName": "IntermediatePatch",
+        "trainedOn": "progan",
+        "ckpt": "./weights/IntermediatePatch/train.pth"
+    }
 ]
 

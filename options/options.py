@@ -84,7 +84,7 @@ class EvalOptions():
 
         parser.add_argument('--resultFolder', type=str, default='test_results', help='')
         
-        parser.add_argument('--batchSize', type=int, default=16)
+        parser.add_argument('--batchSize', type=int, default=8)
 
         parser.add_argument('--jpegQuality', type=int, default=None, help="100, 90, 80, ... 30. Used to test robustness of our model. Not apply if None")
         parser.add_argument('--webpQuality', type=int, default=None, help="100, 90, 80, ... 30. Used to test robustness of our model. Not apply if None")

@@ -132,23 +132,24 @@ def write_metrics(output_folder, all_metrics):
 
 def validate(model, loader, device, dataset_length, find_threshold=False):
     y_true, y_pred = [], []
-    with tqdm(total=dataset_length) as pbar:
-        for img, label, _ in loader:
-            # if list move each part to device
-            if isinstance(img, list):
-                img = [
-                    # i.to(device) if isinstance(i, torch.Tensor) else [j.to(device) for j in i]
-                    i.to(device) if isinstance(i, torch.Tensor) else i for i in img
-                ]
-                predictions = model.predict(img) # predictions = model.predict(*img)
-            else:
-                img = img.to(device) 
-                predictions = model.predict(img)    
+    with torch.no_grad():
+        with tqdm(total=dataset_length) as pbar:
+            for img, label, _ in loader:
+                # if list move each part to device
+                if isinstance(img, list):
+                    img = [
+                        # i.to(device) if isinstance(i, torch.Tensor) else [j.to(device) for j in i]
+                        i.to(device) if isinstance(i, torch.Tensor) else i for i in img
+                    ]
+                    predictions = model.predict(img) # predictions = model.predict(*img)
+                else:
+                    img = img.to(device) 
+                    predictions = model.predict(img)    
 
-            y_pred.extend(predictions)
-            y_true.extend(label.flatten().tolist())
-            
-            pbar.update(len(predictions))
+                y_pred.extend(predictions)
+                y_true.extend(label.flatten().tolist())
+                
+                pbar.update(len(predictions))
 
     y_true, y_pred = np.array(y_true), np.array(y_pred)
     return calculate_performance_metrics(y_true, y_pred, find_threshold)

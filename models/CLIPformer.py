@@ -98,7 +98,8 @@ class IntermediatePatch(nn.Module):
     ):
         with torch.no_grad():
             o, _ = self.forward(x)
-            return o.sigmoid().max(-1).values.flatten().tolist()
+            # return o.sigmoid().max(-1).values.flatten().tolist()
+            return o.sigmoid().mean(-1).flatten().tolist()
         
     def load_weights(self, ckpt: str):
         state_dict = torch.load(ckpt, map_location='cpu')
