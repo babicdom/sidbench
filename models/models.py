@@ -106,10 +106,17 @@ MODELS = [
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/CLIPformer/train.pth"
     # },
+    # {
+    #     "modelName": "IntermediatePatch",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/IntermediatePatch/train_progan.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_progan.pickle",
+    # },
     {
         "modelName": "IntermediatePatch",
-        "trainedOn": "progan",
-        "ckpt": "./weights/IntermediatePatch/train.pth"
+        "trainedOn": "ldm",
+        "ckpt": "./weights/IntermediatePatch/train_ldm.pth",
+        "experiment": "./weights/IntermediatePatch/experiment_ldm.pickle",
     }
 ]
 

@@ -154,7 +154,7 @@ def get_model(opt):
         )
     elif model_name == 'IntermediatePatch':
         experiment = pickle.load(
-            open(f"weights/IntermediatePatch/experiment.pickle", "rb")
+            open(opt.experiment, "rb")
         )
         model = IntermediatePatch(
             backbone=experiment["backbone"],
