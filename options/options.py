@@ -91,7 +91,7 @@ class EvalOptions():
         parser.add_argument('--gaussianSigma', type=int, default=None, help="0,1,2,3,4.     Used to test robustness of our model. Not apply if None")
 
         parser.add_argument('--loadSize', type=int, default=None, help='scale images to this size')
-        parser.add_argument('--imgSize', type=int, default=256, help='Padd images to this size')
+        parser.add_argument('--imgSize', type=int, default=256, help='Pad images to this size')
         parser.add_argument('--cropSize', type=int, default=224, help='crop images to this size')
         parser.add_argument('--noResize', default=False, action='store_true')
         parser.add_argument('--noCrop', default=False, action='store_true')

@@ -147,8 +147,10 @@ class PatchBasedMFViT(nn.Module):
         :param export_dirs:
         """
         if isinstance(x, torch.Tensor):
+            print(f"Input tensor shape: {x.shape}")
             x =  self.forward_batch(x)
         elif isinstance(x, list):
+            print(f"Input list of tensors shape: {[img.shape for img in x]}")
             if feature_extraction_batch_size is None:
                 feature_extraction_batch_size = len(x)
             if export_dirs is not None:

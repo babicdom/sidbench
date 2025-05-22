@@ -39,9 +39,9 @@ if __name__ == '__main__':
         opt.ckpt = model_params['ckpt']
         opt.experiment = model_params.get('experiment', None)
         opt.desc = model_params.get('desc', '')
-        
         model = get_model(opt)
 
+        print(f'Cropping: {opt.cropSize}, Image Size: {opt.imgSize}')
         print('\tjpeg_quality: ', None, 'gaussian_sigma: ', None)
         opt.gaussianSigma = None
         opt.jpegQuality = None
