@@ -218,7 +218,7 @@ DATASET_PATHS = [
     #     generative_model='firefly',
     #     order=9
     # ),
-    # # NEW
+    # NEW
     # dict(
     #     real_path='data/test/diffusion_datasets/laion',
     #     fake_path='data/test/spai/flux/',  

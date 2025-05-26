@@ -52,7 +52,7 @@ MODELS = [
     # },
     # {
     #     "modelName": "Rine",
-    #     "trainedOn": "latent_diffusion",
+    #     "trainedOn": "progan",
     #     "ckpt": "./weights/rine_original/model_2class_trainable.pth",
     #     "ncls": "2class",
     #     "desc": "_2_class"
@@ -96,11 +96,11 @@ MODELS = [
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/gramnet/Gram.pth"
     # },
-    {
-        "modelName": "SPAI",
-        "trainedOn": "progan",
-        "ckpt": "./weights/spai/spai.pth"
-    },
+    # {
+    #     "modelName": "SPAI",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/spai/spai.pth"
+    # },
     # {
     #     "modelName": "CLIPformer",
     #     "trainedOn": "progan",
@@ -112,11 +112,12 @@ MODELS = [
     #     "ckpt": "./weights/IntermediatePatch/train_progan.pth",
     #     "experiment": "./weights/IntermediatePatch/experiment_progan.pickle",
     # },
-    # {
-    #     "modelName": "IntermediatePatch",
-    #     "trainedOn": "ldm",
-    #     "ckpt": "./weights/IntermediatePatch/train_ldm.pth",
-    #     "experiment": "./weights/IntermediatePatch/experiment_ldm.pickle",
-    # }
+    {
+        "modelName": "IntermediatePatch",
+        "trainedOn": "ldm",
+        "ckpt": "./weights/IntermediatePatch/train_progan.pth",
+        "experiment": "./weights/IntermediatePatch/experiment_progan.pickle",
+        "desc": "Progan_mean"
+    }
 ]
 
