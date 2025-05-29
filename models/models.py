@@ -77,11 +77,6 @@ MODELS = [
     #     "ckpt": "./weights/npr/NPR.pth"
     # },
     # {
-    #     "modelName": "RPTC",
-    #     "trainedOn": "progan",
-    #     "ckpt": "./weights/rptc/RPTC.pth"
-    # },
-    # {
     #     "modelName": "Fusing",
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/fusing/PSM.pth"
@@ -112,12 +107,25 @@ MODELS = [
     #     "ckpt": "./weights/IntermediatePatch/train_progan.pth",
     #     "experiment": "./weights/IntermediatePatch/experiment_progan.pickle",
     # },
+    # {
+    #     "modelName": "IntermediatePatch",
+    #     "trainedOn": "ldm",
+    #     "ckpt": "./weights/IntermediatePatch/train_progan_supcon.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_progan_supcon.pickle",
+    #     "desc": "Progan_max_supcon",
+    # },
+    # {
+    #     "modelName": "AttentionIntermediatePatch",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/IntermediatePatch/train_attention_supcon.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_attention_supcon.pickle",
+    #     "desc": "_progan_supcon",
+    # },
     {
-        "modelName": "IntermediatePatch",
-        "trainedOn": "ldm",
-        "ckpt": "./weights/IntermediatePatch/train_progan.pth",
-        "experiment": "./weights/IntermediatePatch/experiment_progan.pickle",
-        "desc": "Progan_mean"
-    }
+        "modelName": "SigLIPIntermediate",
+        "trainedOn": "progan",
+        "ckpt": "./weights/IntermediatePatch/train_siglip.pth",
+        "experiment": "./weights/IntermediatePatch/experiment_siglip.json",
+    },
 ]
 

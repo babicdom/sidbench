@@ -18,12 +18,14 @@ from utils.util import setup_device
 
 MEAN = { 
     "imagenet":[0.485, 0.456, 0.406], 
-    "clip":[0.48145466, 0.4578275, 0.40821073] 
+    "clip":[0.48145466, 0.4578275, 0.40821073],
+    "siglip": [0.5, 0.5, 0.5]
 }
 
 STD = { 
     "imagenet":[0.229, 0.224, 0.225], 
-    "clip":[0.26862954, 0.26130258, 0.27577711] 
+    "clip":[0.26862954, 0.26130258, 0.27577711],
+    "siglip": [0.5, 0.5, 0.5]
 }
 
 class PadIfNeeded:
@@ -138,6 +140,25 @@ def clip_processing(img, opt):
     transformations.append(crop_func)
     transformations.append(transforms.ToTensor())
     transformations.append(transforms.Normalize(mean=MEAN['clip'], std=STD['clip']))
+
+    transform = transforms.Compose(transformations)
+    
+    return transform(img)
+
+def siglip_processing(img, opt):
+    transformations = [PadIfNeeded(min_height=opt.imgSize, min_width=opt.imgSize)]
+
+    if opt.loadSize:
+        transformations.append(transforms.Resize(size=(opt.loadSize, opt.loadSize)))
+
+    if opt.isTrain:
+        crop_func = transforms.RandomCrop(opt.cropSize)
+    else:
+        crop_func = transforms.CenterCrop(opt.cropSize)
+
+    transformations.append(crop_func)
+    transformations.append(transforms.ToTensor())
+    transformations.append(transforms.Normalize(mean=MEAN['siglip'], std=STD['siglip']))
 
     transform = transforms.Compose(transformations)
     
@@ -397,8 +418,11 @@ def processing(img, opt, label, image_path):
     if opt.modelName == 'SPAI':
         return spai_processing(img, opt), label, image_path
     
-    if opt.modelName == 'CLIPformer' or opt.modelName == 'CLIPatch' or opt.modelName == 'IntermediatePatch':
+    if opt.modelName == 'CLIPformer' or opt.modelName == 'CLIPatch' or opt.modelName == 'IntermediatePatch' or opt.modelName == 'AttentionIntermediatePatch':
         return clip_processing(img, opt), label, image_path
+    
+    if opt.modelName == 'SigLIPIntermediate':
+        return siglip_processing(img, opt), label, image_path
 
     
     raise ValueError(f"Model {opt.modelName} not found")

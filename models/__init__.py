@@ -11,19 +11,23 @@ from models.NPR import NPR
 from models.Dire import Dire
 from models.DeFake import DeFake
 from models.SPAI import build_mf_vit, remap_pretrained_keys_vit
-from models.CLIPformer import CLIPformer, CLIPatch, IntermediatePatch
+from models.CLIPformer import CLIPformer, CLIPatch, IntermediatePatch, AttentionIntermediatePatch
+from models.SigLIPIntermediate import SigLIPIntermediate
 
 import re
 import torch
 import yaml
 import pickle
+import json
 
 from networks.blip.blip import blip_decoder
 from preprocessing.lgrad.models import build_model
 from utils.util import setup_device
 
 
-VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake', 'SPAI', 'CLIPformer', 'CLIPatch', 'IntermediatePatch']
+VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 
+                'NPR', 'Dire', 'DeFake', 'SPAI', 'CLIPformer', 'CLIPatch', 'IntermediatePatch', 'AttentionIntermediatePatch',
+                'SigLIPIntermediate']
 
 
 def get_model(opt):
@@ -157,6 +161,26 @@ def get_model(opt):
             open(opt.experiment, "rb")
         )
         model = IntermediatePatch(
+            backbone=experiment["backbone"],
+            device=device,
+            nproj=experiment["nproj"],
+            proj_dim=experiment["proj_dim"],
+        )
+    elif model_name == 'AttentionIntermediatePatch':
+        experiment = pickle.load(
+            open(opt.experiment, "rb")
+        )
+        model = AttentionIntermediatePatch(
+            device=device,
+            att_dim=experiment["att_dim"],
+            n_heads=experiment["n_heads"]
+        )
+    elif model_name == 'SigLIPIntermediate':
+        opt.cropSize = 256
+        experiment = json.load(
+            open(opt.experiment, "rb")
+        )
+        model = SigLIPIntermediate(
             backbone=experiment["backbone"],
             device=device,
             nproj=experiment["nproj"],

@@ -2,9 +2,12 @@ from functools import partial
 from typing import Callable
 import torch
 import torch.nn as nn
+import numpy as np
 import clip
 from networks.vision_transformer import Encoder
 from einops import rearrange
+import pickle
+from typing import Union
 
 CLIP_SEQ_LENGTH=256
 
@@ -92,15 +95,171 @@ class IntermediatePatch(nn.Module):
         p = self.head(z).squeeze().permute(1, 0)
         return p, z
     
+    def forward_slide(self, img, stride=112, crop_size=224, patch_size=14, reshape=True):
+        """Inference by sliding-window with overlap.
+        If h_crop > h_img or w_crop > w_img, the small patch will be used to
+        decode without padding.
+        """
+        if type(img) == list:
+            img = img[0].unsqueeze(0)
+        if type(stride) == int:
+            stride = (stride, stride)
+        if type(crop_size) == int:
+            crop_size = (crop_size, crop_size)
+
+        h_stride, w_stride = stride
+        h_crop, w_crop = crop_size
+        batch_size, _, h_img, w_img = img.shape
+        n_h, n_w = h_img // patch_size, w_img // patch_size
+        s_h, s_w = h_stride // patch_size, w_stride // patch_size
+        h_img, w_img = n_h * patch_size, n_w * patch_size
+        h_w, w_w = h_crop // patch_size, w_crop // patch_size
+
+        h_grids = max(h_img - h_crop + h_stride - 1, 0) // h_stride + 1
+        w_grids = max(w_img - w_crop + w_stride - 1, 0) // w_stride + 1
+
+        preds = img.new_zeros((batch_size, n_h, n_w))
+        count_mat = img.new_zeros((batch_size, n_h, n_w))
+        for h_idx in range(h_grids):
+            for w_idx in range(w_grids):
+                y1 = h_idx * h_stride
+                x1 = w_idx * w_stride
+                y2 = min(y1 + h_crop, h_img)
+                x2 = min(x1 + w_crop, w_img)
+                y1 = max(y2 - h_crop, 0)
+                x1 = max(x2 - w_crop, 0)
+
+                h_1, w_1 = h_idx * s_h, w_idx * s_w
+                h_2, w_2 = min(h_1 + h_w, n_h), min(w_1 + w_w, n_w)
+                h_1, w_1 = max(h_2 - h_w, 0), max(w_2 - w_w, 0)
+
+                crop_img = img[:, :, y1:y2, x1:x2]
+                crop_seg_logit, _ = self.forward(crop_img)
+                crop_seg_logit = crop_seg_logit.reshape(-1, h_w, w_w)
+
+                preds += nn.functional.pad(crop_seg_logit,
+                               (int(w_1), int(preds.shape[2] - w_2), int(h_1),
+                                int(preds.shape[1] - h_2)))
+
+                count_mat[:, h_1:h_2, w_1:w_2] += 1
+        assert (count_mat == 0).sum() == 0
+
+        preds = preds / count_mat
+
+        if reshape:
+            return preds.reshape(batch_size, -1)
+        else:
+            return preds
+
     def predict(
+            self, 
+            x: Union[torch.Tensor, list[torch.Tensor]],
+    ):
+        with torch.no_grad():
+            stride = 112
+            if isinstance(x, list):
+                o = []
+                for xi in x: 
+                    o_i = self.forward_slide([xi], stride=stride)
+                    o.append(o_i.sigmoid().mean(-1).flatten().cpu().numpy())
+                    # o.append(o_i.sigmoid().max(-1).values.flatten().cpu().numpy())
+                return np.array(o).squeeze()
+            else:
+                o = self.forward_slide(x, stride=stride)
+                return o.sigmoid().mean(-1).flatten().cpu().numpy()
+                # return o.sigmoid().max(-1).values.flatten().cpu().numpy()
+        
+    def load_weights(self, ckpt: str):
+        state_dict = torch.load(ckpt, map_location='cpu')
+        self.load_state_dict(state_dict, strict=False)
+        print(f"Loaded weights from {ckpt}")
+
+class PatchAttention(nn.Module):
+    def __init__(
+            self, 
+            att_dim: int,
+            n_heads: int,
+            hidden_dim: int,
+            dropout: int = 0.0,
+        ):
+        super().__init__()
+        dim_head: int = att_dim // n_heads
+        self.heads = n_heads
+        self.scale = dim_head ** -0.5
+        self.attend = nn.Softmax(dim=-1)
+        self.k = nn.Linear(hidden_dim, att_dim, bias=False)
+        self.patch_aggregator = nn.Parameter(torch.zeros((n_heads, 1, att_dim//n_heads)))
+        self.dropout = nn.Dropout(dropout)
+        nn.init.trunc_normal_(self.patch_aggregator, std=.02)
+
+    def forward(
             self, 
             x: torch.Tensor,
     ):
+        aggregator: torch.Tensor = self.patch_aggregator.expand(x.size(0), -1, -1, -1)
+        k = self.k(x)
+        k = rearrange(k, 'b n (h d) -> b h n d', h=self.heads)
+        dots = torch.matmul(aggregator, k.transpose(-1, -2)) * self.scale
+        attn = self.attend(dots)
+        attn = self.dropout(attn)
+
+        if self.heads > 1:
+            attn = attn.mean(dim=1)
+        attn = attn.squeeze()
+        return attn
+
+class AttentionIntermediatePatch(nn.Module):
+    def __init__(
+        self,
+        att_dim,
+        n_heads,
+        device,
+    ):
+        super().__init__()
+
+        self.device = device
+
+        opt = pickle.load(
+            open(f"weights/IntermediatePatch/experiment_progan.pickle", "rb")
+        )
+        self.intermediate_patch = IntermediatePatch(
+            backbone=opt["backbone"],
+            nproj=opt["nproj"],
+            proj_dim=opt["proj_dim"],
+            device=torch.device("cuda:0"),
+        )
+        self.intermediate_patch.load_state_dict(
+            torch.load(f"weights/IntermediatePatch/train_progan.pth", map_location="cuda:0")
+        )
+
+        for name, param in self.intermediate_patch.named_parameters():
+            param.requires_grad = False
+
+        self.window_attention = PatchAttention(
+            att_dim=att_dim,
+            n_heads=n_heads,
+            hidden_dim=opt["proj_dim"],
+        )
+        
+        self.to(device)
+
+    def forward(self, x):
+        with torch.no_grad():
+            p, z = self.intermediate_patch(x)
+        g = self.window_attention(z.permute(1, 0, 2))
+        p = p * g
+        p = p.sum(dim=1)
+        return p, g
+    
+    def predict(
+            self, 
+            x: torch.Tensor,
+            **kwargs
+    ):
         with torch.no_grad():
             o, _ = self.forward(x)
-            # return o.sigmoid().max(-1).values.flatten().tolist()
-            return o.sigmoid().mean(-1).flatten().tolist()
-        
+            return o.sigmoid().flatten().cpu().numpy()
+
     def load_weights(self, ckpt: str):
         state_dict = torch.load(ckpt, map_location='cpu')
         self.load_state_dict(state_dict, strict=False)
