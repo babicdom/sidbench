@@ -23,13 +23,84 @@ if __name__ == '__main__':
 
     opt = parser.parse_args()
 
-    datasets = [
-        dict(data_paths=[dp['real_path'], dp['fake_path']], 
-             source=dp['source'],
-             generative_model=dp['generative_model'],
-             family=dp['family'])
-        for dp in DATASET_PATHS
-    ]
+    if opt.family == "all":
+        datasets = [
+            dict(
+                data_paths=['data/test'],
+                source='all',
+                family='all',
+                generative_model='all'
+            ),
+        ]
+    elif opt.family == "gan":
+        datasets = [
+            dict(
+                data_paths=[
+                    'data/test/diffusion_datasets/laion',
+                    'data/test/biggan/',
+                    'data/test/cyclegan',
+                    'data/test/gaugan',
+                    'data/test/progan',
+                    'data/test/stargan',
+                    'data/test/stylegan',
+                    'data/test/stylegan2',
+                    'data/test/deepfake',
+                    'data/test/crn',
+                    'data/test/imle',
+                    'data/test/san',
+                    'data/test/seeingdark',
+                    'data/test/whichfaceisreal',
+                    'data/test/diffusion_datasets/dalle',
+                    'data/test/synthbuster/dalle3/',
+                    'data/test/synthbuster/dalle2/',
+                    'data/test/spai/gigagan/',
+                ],
+                source='all gans',
+                family='gan based',
+                generative_model='gan based'
+            )
+        ]
+    elif opt.family == 'ldm':
+        datasets = [
+            dict(
+                data_paths=[
+                    'data/test/diffusion_datasets/laion',
+                    'data/test/synthbuster/raise',
+                    'data/test/diffusion_datasets/imagenet',
+                    'data/test/diffusion_datasets/glide_100_10',
+                    'data/test/diffusion_datasets/glide_100_27',
+                    'data/test/diffusion_datasets/glide_50_27',
+                    'data/test/diffusion_datasets/guided',
+                    'data/test/diffusion_datasets/ldm_100',
+                    'data/test/diffusion_datasets/ldm_200',
+                    'data/test/diffusion_datasets/ldm_200_cfg',
+                    'data/test/synthbuster/glide/',
+                    'data/test/synthbuster/dalle2/',
+                    'data/test/synthbuster/stable-diffusion-1-3/',
+                    'data/test/synthbuster/stable-diffusion-1-4/',
+                    'data/test/synthbuster/midjourney-v5/',
+                    'data/test/synthbuster/dalle3/',
+                    'data/test/synthbuster/stable-diffusion-2/',
+                    'data/test/synthbuster/stable-diffusion-xl/',
+                    'data/test/synthbuster/firefly/',
+                    'data/test/spai/flux/',
+                    'data/test/spai/midjourney-v6.1/',
+                    'data/test/spai/stable-diffusion-3/', 
+                ],
+                source='all ldms',
+                family='ldm based',
+                generative_model='ldm based'
+            )
+        ]
+    else:
+        datasets = [
+            dict(data_paths=[dp['real_path'], dp['fake_path']], 
+                source=dp['source'],
+                generative_model=dp['generative_model'],
+                family=dp['family'])
+            for dp in DATASET_PATHS
+        ]
+    print(f"Number of datasets: {len(datasets)}")
 
     for model_params in MODELS:
         set_random_seed()

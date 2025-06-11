@@ -27,7 +27,7 @@ from utils.util import setup_device
 
 VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 
                 'NPR', 'Dire', 'DeFake', 'SPAI', 'CLIPformer', 'CLIPatch', 'IntermediatePatch', 'AttentionIntermediatePatch',
-                'SigLIPIntermediate']
+                'SigLIPIntermediate', 'WindowIntermediatePacth', 'WindowedSigLIPIntermediate']
 
 
 def get_model(opt):
@@ -156,9 +156,14 @@ def get_model(opt):
             mlp_dim=experiment["mlp_dim"],
             att_dim=experiment["att_dim"],
         )
-    elif model_name == 'IntermediatePatch':
-        experiment = pickle.load(
-            open(opt.experiment, "rb")
+    elif model_name == 'IntermediatePatch' or model_name == 'WindowIntermediatePacth':
+        if model_name == 'WindowIntermediatePacth':
+            opt.cropSize = None
+        # experiment = pickle.load(
+        #     open(opt.experiment, "rb")
+        # )
+        experiment = json.load(
+            open(opt.experiment, "r")
         )
         model = IntermediatePatch(
             backbone=experiment["backbone"],
@@ -175,10 +180,13 @@ def get_model(opt):
             att_dim=experiment["att_dim"],
             n_heads=experiment["n_heads"]
         )
-    elif model_name == 'SigLIPIntermediate':
-        opt.cropSize = 256
+    elif model_name == 'SigLIPIntermediate' or model_name == "WindowedSigLIPIntermediate":
+        if model_name == "WindowedSigLIPIntermediate":
+            opt.cropSize = None
+        else:
+            opt.cropSize = 256
         experiment = json.load(
-            open(opt.experiment, "rb")
+            open(opt.experiment, "r")
         )
         model = SigLIPIntermediate(
             backbone=experiment["backbone"],

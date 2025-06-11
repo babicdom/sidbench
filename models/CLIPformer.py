@@ -8,6 +8,7 @@ from networks.vision_transformer import Encoder
 from einops import rearrange
 import pickle
 from typing import Union
+from torchvision import transforms
 
 CLIP_SEQ_LENGTH=256
 
@@ -92,7 +93,9 @@ class IntermediatePatch(nn.Module):
         z = torch.sum(z, dim=2)
         z = self.proj2(z)
 
-        p = self.head(z).squeeze().permute(1, 0)
+        p = self.head(z).squeeze()
+        if p.dim() == 2:
+            p = p.permute(1, 0)
         return p, z
     
     def forward_slide(self, img, stride=112, crop_size=224, patch_size=14, reshape=True):
@@ -134,6 +137,10 @@ class IntermediatePatch(nn.Module):
                 h_1, w_1 = max(h_2 - h_w, 0), max(w_2 - w_w, 0)
 
                 crop_img = img[:, :, y1:y2, x1:x2]
+                crop_img = transforms.Normalize(
+                    mean=(0.48145466, 0.4578275, 0.40821073),
+                    std=(0.26862954, 0.26130258, 0.27577711),
+                )(crop_img)
                 crop_seg_logit, _ = self.forward(crop_img)
                 crop_seg_logit = crop_seg_logit.reshape(-1, h_w, w_w)
 
@@ -154,20 +161,34 @@ class IntermediatePatch(nn.Module):
     def predict(
             self, 
             x: Union[torch.Tensor, list[torch.Tensor]],
+            **kwargs
     ):
         with torch.no_grad():
-            stride = 112
-            if isinstance(x, list):
-                o = []
-                for xi in x: 
-                    o_i = self.forward_slide([xi], stride=stride)
-                    o.append(o_i.sigmoid().mean(-1).flatten().cpu().numpy())
-                    # o.append(o_i.sigmoid().max(-1).values.flatten().cpu().numpy())
-                return np.array(o).squeeze()
+            p = kwargs.get("p", 1)
+            method = kwargs.get("method", "mean")
+            if kwargs.get("window_slide", False):
+                stride = kwargs.get("stride", 112)
+                if isinstance(x, list):
+                    o = []
+                    for xi in x: 
+                        o_i = self.forward_slide(xi, stride=stride)
+                        if method == "mean":
+                            o.append(o_i.sigmoid().pow(p).mean(-1).pow(1/p).flatten().cpu().numpy())
+                        elif method == "max":
+                            o.append(o_i.sigmoid().max(-1).values.flatten().cpu().numpy())
+                    return np.array(o).squeeze()
+                else:
+                    o = self.forward_slide(x, stride=stride)
+                    if method == "mean":
+                        return o.sigmoid().pow(p).mean(-1).pow(1/p).flatten().cpu().numpy()
+                    elif method == "max":
+                        return o.sigmoid().max(-1).values.flatten().cpu().numpy()
             else:
-                o = self.forward_slide(x, stride=stride)
-                return o.sigmoid().mean(-1).flatten().cpu().numpy()
-                # return o.sigmoid().max(-1).values.flatten().cpu().numpy()
+                o, _ = self.forward(x)
+                if method == "mean":
+                    return o.sigmoid().pow(p).mean(-1).pow(1/p).flatten().cpu().numpy()
+                elif method == "max":
+                    return o.sigmoid().max(-1).values.flatten().cpu().numpy()
         
     def load_weights(self, ckpt: str):
         state_dict = torch.load(ckpt, map_location='cpu')

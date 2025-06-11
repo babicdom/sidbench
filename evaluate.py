@@ -130,7 +130,7 @@ def write_metrics(output_folder, all_metrics):
         json.dump(curves, f, indent=4, cls=NumpyEncoder)
 
 
-def validate(model, loader, device, dataset_length, find_threshold=False):
+def validate(model, loader, device, dataset_length, find_threshold=False, opt=None):
     y_true, y_pred = [], []
     with torch.no_grad():
         with tqdm(total=dataset_length) as pbar:
@@ -141,11 +141,14 @@ def validate(model, loader, device, dataset_length, find_threshold=False):
                         # i.to(device) if isinstance(i, torch.Tensor) else [j.to(device) for j in i]
                         i.to(device) if isinstance(i, torch.Tensor) else i for i in img
                     ]
-                    predictions = model.predict(img) # predictions = model.predict(*img)
+                    # predictions = model.predict(*img)
                 else:
                     img = img.to(device) 
-                    predictions = model.predict(img)    
 
+                if opt.modelName == 'IntermediatePatch' or opt.modelName == 'SigLIPIntermediate' or opt.modelName == 'WindowIntermediatePacth' or opt.modelName == 'WindowedSigLIPIntermediate':
+                    predictions = model.predict(img, p=opt.p, method=opt.method, window_slide=opt.window_slide)
+                else:
+                    predictions = model.predict(img)
                 y_pred.extend(predictions)
                 y_true.extend(label.flatten().tolist())
                 
@@ -184,7 +187,7 @@ def run_for_model(datasets, model, opt):
 
     if opt.modelName == 'Fusing':
         collate_fn = patch_collate 
-    elif opt.modelName == 'SPAI':
+    elif opt.modelName == 'SPAI' or opt.modelName == 'WindowIntermediatePacth' or opt.modelName == 'WindowedSigLIPIntermediate':
         collate_fn = image_enlisting_collate_fn
     else:
         collate_fn = None
@@ -206,7 +209,7 @@ def run_for_model(datasets, model, opt):
                                              shuffle=False, 
                                              num_workers=opt.numThreads,
                                              collate_fn=collate_fn)
-        metrics = validate(model, loader, device, dataset_length=dataset_length, find_threshold=True)
+        metrics = validate(model, loader, device, dataset_length=dataset_length, find_threshold=True, opt=opt)
         metrics['source'] = dataset_params['source'] if 'source' in dataset_params else 'unknown'
         metrics['generative_model'] = dataset_params['generative_model'] if 'generative_model' in dataset_params else 'unknown'
         metrics['family'] = dataset_params['family'] if 'family' in dataset_params else 'unknown'

@@ -132,6 +132,11 @@ class EvalOptions():
         # additional
         parser.add_argument('--desc', type=str, default='', help='description of the experiment to be shown in the folder name.')
 
+        # IP
+        parser.add_argument('--window_slide', type=bool, default=False, help='Windowing of the Intermediate Patch.')
+        parser.add_argument('--p', type=int, default=1, help='Scaling value for Generalized mean.')
+        parser.add_argument('--method', type=str, default='mean', help='Method for prediction agreggation.')
+
         self.initialized = True
 
         return parser

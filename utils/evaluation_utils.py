@@ -35,6 +35,16 @@ def calculate_for_threshold(y_true, y_pred, threshold):
         'ppv': ppv, 'npv': npv, 'tpr': tpr, 'tnr': tnr 
     }   
 
+def find_threshold_for_real_acc(y_true, y_pred, acc):
+    thresholds = np.linspace(0.05, 0.95, 100)
+    best_thresholds = []
+
+    for threshold in thresholds:
+        accuracy = accuracy_score(y_true[y_true==0], y_pred[y_true == 0] > threshold)
+        if accuracy > acc:
+            best_thresholds.append(threshold)
+
+    return min(best_thresholds) if len(best_thresholds) != 0 else 0.95 
 
 def calculate_performance_metrics(y_true, y_pred, find_threshold=False):
 
@@ -52,6 +62,9 @@ def calculate_performance_metrics(y_true, y_pred, find_threshold=False):
     # Acc based on 0.5
     metrics['threshold_05'] = calculate_for_threshold(y_true, y_pred, 0.5)
 
+    metrics['real_acc_threshold'] = find_threshold_for_real_acc(y_true, y_pred, 0.95)
+    metrics['threshold_real_acc_095'] = calculate_for_threshold(y_true, y_pred, metrics['real_acc_threshold'])
+
     if not find_threshold:
         return metrics
 
@@ -59,7 +72,8 @@ def calculate_performance_metrics(y_true, y_pred, find_threshold=False):
     metrics['best_threshold'] = find_best_acc_threshold(y_true, y_pred)
     metrics['oracle_threshold'] = calculate_for_threshold(y_true, y_pred, metrics['best_threshold'])
 
-    print(f"best ACC / ACC@0.5 / AP / AUC: {metrics['oracle_threshold']['acc']*100:1.2f} / {metrics['threshold_05']['acc']*100:1.2f} / {metrics['ap']*100:1.2f} / {metrics['roc_auc']*100:1.2f}")
+    print(f"ACC@0.5 / AP / AUC: {metrics['threshold_05']['acc']*100:1.2f} / {metrics['ap']*100:1.2f} / {metrics['roc_auc']*100:1.2f}")
+    print(f"TPR / TNR / TPR@95%TNR: {metrics['oracle_threshold']['tpr']*100:1.2f} / {metrics['oracle_threshold']['tnr']*100:1.2f} / {metrics['threshold_real_acc_095']['tpr']*100:1.2f}")
 
     return metrics
 

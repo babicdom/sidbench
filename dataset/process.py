@@ -375,6 +375,17 @@ def spai_processing(img, opt):
     transform = transforms.Compose(transforms_list)
     return transform(img)
 
+def window_processing(img, opt):
+    transforms_list = []
+
+    if opt.imgSize is not None:
+        transforms_list.append(PadIfNeeded(min_height=opt.imgSize, min_width=opt.imgSize))
+    if opt.cropSize is not None:
+        transforms_list.append(transforms.CenterCrop(opt.cropSize))
+    transforms_list.append(transforms.ToTensor())
+    transform = transforms.Compose(transforms_list)
+    return transform(img)
+
 def processing(img, opt, label, image_path):
     assert opt.modelName in VALID_MODELS
 
@@ -423,6 +434,9 @@ def processing(img, opt, label, image_path):
     
     if opt.modelName == 'SigLIPIntermediate':
         return siglip_processing(img, opt), label, image_path
+    
+    if opt.modelName == "WindowIntermediatePacth" or opt.modelName == "WindowedSigLIPIntermediate":
+        return window_processing(img, opt), label, image_path
 
     
     raise ValueError(f"Model {opt.modelName} not found")

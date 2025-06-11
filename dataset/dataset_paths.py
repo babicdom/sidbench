@@ -1,262 +1,255 @@
 DATASET_PATHS = [
-    # dict(
-    #     real_path='data/test/biggan/',   # Imagenet 
-    #     fake_path='data/test/biggan/',
-    #     source='wang2020',
-    #     family='gan', # Unconditional GAN
-    #     generative_model='biggan'
-    # ),
-    # dict(
-    #     real_path='data/test/cyclegan',   
-    #     fake_path='data/test/cyclegan',
-    #     source='wang2020',
-    #     family='gan',
-    #     generative_model='cyclegan' # Conditional GAN
-    # ),
-    # dict(
-    #     real_path='data/test/gaugan',    # It is COCO 
-    #     fake_path='data/test/gaugan',
-    #     source='wang2020',
-    #     family='gan', # Conditional GAN
-    #     generative_model='gaugan'
-    # ),
-    # dict(
-    #     real_path='data/test/progan',     
-    #     fake_path='data/test/progan',
-    #     source='wang2020',
-    #     family='gan',
-    #     generative_model='progan' # Unconditional GAN
-    # ),
-    # dict(
-    #     real_path='data/test/stargan',  
-    #     fake_path='data/test/stargan',
-    #     source='wang2020',
-    #     family='gan', # Conditional GAN
-    #     generative_model='stargan'
-    # ),
-    # dict(
-    #     real_path='data/test/stylegan',    
-    #     fake_path='data/test/stylegan',
-    #     source='wang2020',
-    #     family='gan', # Unconditional GAN
-    #     generative_model='stylegan' 
-    # ),
-    # dict(
-    #     real_path='data/test/stylegan2',    
-    #     fake_path='data/test/stylegan2',
-    #     source='wang2020',
-    #     family='gan',
-    #     generative_model='stylegan2'
-    # ),
-    # dict(
-    #     real_path='data/test/deepfake',   
-    #     fake_path='data/test/deepfake',
-    #     source='wang2020', 
-    #     family='deepfake', # FaceForensics++
-    #     generative_model='deepfake'
-    # ),
-    # dict(
-    #     real_path='data/test/crn',   # Images from some video games
-    #     fake_path='data/test/crn',
-    #     source='wang2020',
-    #     family='perceptual_loss',
-    #     generative_model='crn'
-    # ),
-    # dict(
-    #     real_path='data/test/imle',   # Images from some video games
-    #     fake_path='data/test/imle',
-    #     source='wang2020',
-    #     family='perceptual_loss',
-    #     generative_model='imle'
-    # ),
-    # dict(
-    #     real_path='data/test/san',   
-    #     fake_path='data/test/san',
-    #     source='wang2020',
-    #     family='low_level_vision',
-    #     generative_model='san'
-    # ),
-    # dict(
-    #     real_path='data/test/seeingdark',   
-    #     fake_path='data/test/seeingdark',
-    #     source='wang2020',
-    #     family='low_level_vision',
-    #     generative_model='sitd'
-    # ),
-    # dict(
-    #     real_path='data/test/whichfaceisreal',
-    #     fake_path='data/test/whichfaceisreal',
-    #     source='wang2020',
-    #     family='gan', # StyleGAN 
-    #     generative_model='whichfaceisreal'
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/diffusion_datasets/dalle',
-    #     source='ojha2023',
-    #     family='diffusion', # auto-regressive 
-    #     generative_model='dalle'
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/diffusion_datasets/glide_100_10',
-    #     source='ojha2023',
-    #     family='diffusion',
-    #     generative_model='glide_100_10'
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/diffusion_datasets/glide_100_27',
-    #     source='ojha2023',
-    #     family='diffusion',
-    #     generative_model='glide_100_27'
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/diffusion_datasets/glide_50_27',
-    #     source='ojha2023',
-    #     family='diffusion',
-    #     generative_model='glide_50_27'
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/imagenet',
-    #     fake_path='data/test/diffusion_datasets/guided',
-    #     source='ojha2023',
-    #     family='diffusion',
-    #     generative_model='guided'
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/diffusion_datasets/ldm_100',
-    #     source='ojha2023',
-    #     family='diffusion',
-    #     generative_model='ldm_100'
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/diffusion_datasets/ldm_200',
-    #     source='ojha2023',
-    #     family='diffusion',
-    #     generative_model='ldm_200'
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/diffusion_datasets/ldm_200_cfg',
-    #     source='ojha2023',
-    #     family='diffusion',
-    #     generative_model='ldm_200_cfg'
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/glide/',  
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='glide',
-    #     order=1
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/dalle2/',
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='dalle2',
-    #     order=2
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/stable-diffusion-1-3/',  
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='stable-diffusion-1-3',
-    #     order=3
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/stable-diffusion-1-4/',  
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='stable-diffusion-1-4',
-    #     order=4
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/midjourney-v5/',  
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='midjourney-v5',
-    #     order=5
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/dalle3/',   
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='dalle3',
-    #     order=6
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/stable-diffusion-2/',  
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='stable-diffusion-2',
-    #     order=7
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/stable-diffusion-xl/',   
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='stable-diffusion-xl',
-    #     order=8
-    # ),
-    # dict(
-    #     real_path='data/test/synthbuster/raise',
-    #     fake_path='data/test/synthbuster/firefly/',  
-    #     source='synthbuster',
-    #     family='diffusion',
-    #     generative_model='firefly',
-    #     order=9
-    # ),
-    # NEW
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/spai/flux/',  
-    #     source='karageorgiou2025',
-    #     family='flux',
-    #     generative_model='flux',
-    #     order=10
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/spai/gigagan/',  
-    #     source='karageorgiou2025',
-    #     family='gan',
-    #     generative_model='gigagan',
-    #     order=11
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/spai/midjourney-v6.1/',  
-    #     source='karageorgiou2025',
-    #     family='diffusion',
-    #     generative_model='midjourney-v6.1',
-    #     order=12
-    # ),
-    # dict(
-    #     real_path='data/test/diffusion_datasets/laion',
-    #     fake_path='data/test/spai/stable-diffusion-3/',  
-    #     source='karageorgiou2025',
-    #     family='diffusion',
-    #     generative_model='stable-diffusion-3',
-    #     order=13
-    # ),
     dict(
-        real_path='data/test',
-        fake_path='data/test/',
-        source='all',
-        family='all',
-        generative_model='all'
+        real_path='data/test/biggan/',   # Imagenet 
+        fake_path='data/test/biggan/',
+        source='wang2020',
+        family='gan', # Unconditional GAN
+        generative_model='biggan'
+    ),
+    dict(
+        real_path='data/test/cyclegan',   
+        fake_path='data/test/cyclegan',
+        source='wang2020',
+        family='gan',
+        generative_model='cyclegan' # Conditional GAN
+    ),
+    dict(
+        real_path='data/test/gaugan',    # It is COCO 
+        fake_path='data/test/gaugan',
+        source='wang2020',
+        family='gan', # Conditional GAN
+        generative_model='gaugan'
+    ),
+    dict(
+        real_path='data/test/progan',     
+        fake_path='data/test/progan',
+        source='wang2020',
+        family='gan',
+        generative_model='progan' # Unconditional GAN
+    ),
+    dict(
+        real_path='data/test/stargan',  
+        fake_path='data/test/stargan',
+        source='wang2020',
+        family='gan', # Conditional GAN
+        generative_model='stargan'
+    ),
+    dict(
+        real_path='data/test/stylegan',    
+        fake_path='data/test/stylegan',
+        source='wang2020',
+        family='gan', # Unconditional GAN
+        generative_model='stylegan' 
+    ),
+    dict(
+        real_path='data/test/stylegan2',    
+        fake_path='data/test/stylegan2',
+        source='wang2020',
+        family='gan',
+        generative_model='stylegan2'
+    ),
+    dict(
+        real_path='data/test/deepfake',   
+        fake_path='data/test/deepfake',
+        source='wang2020', 
+        family='deepfake', # FaceForensics++
+        generative_model='deepfake'
+    ),
+    dict(
+        real_path='data/test/crn',   # Images from some video games
+        fake_path='data/test/crn',
+        source='wang2020',
+        family='perceptual_loss',
+        generative_model='crn'
+    ),
+    dict(
+        real_path='data/test/imle',   # Images from some video games
+        fake_path='data/test/imle',
+        source='wang2020',
+        family='perceptual_loss',
+        generative_model='imle'
+    ),
+    dict(
+        real_path='data/test/san',   
+        fake_path='data/test/san',
+        source='wang2020',
+        family='low_level_vision',
+        generative_model='san'
+    ),
+    dict(
+        real_path='data/test/seeingdark',   
+        fake_path='data/test/seeingdark',
+        source='wang2020',
+        family='low_level_vision',
+        generative_model='sitd'
+    ),
+    dict(
+        real_path='data/test/whichfaceisreal',
+        fake_path='data/test/whichfaceisreal',
+        source='wang2020',
+        family='gan', # StyleGAN 
+        generative_model='whichfaceisreal'
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/diffusion_datasets/dalle',
+        source='ojha2023',
+        family='diffusion', # auto-regressive 
+        generative_model='dalle'
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/diffusion_datasets/glide_100_10',
+        source='ojha2023',
+        family='diffusion',
+        generative_model='glide_100_10'
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/diffusion_datasets/glide_100_27',
+        source='ojha2023',
+        family='diffusion',
+        generative_model='glide_100_27'
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/diffusion_datasets/glide_50_27',
+        source='ojha2023',
+        family='diffusion',
+        generative_model='glide_50_27'
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/imagenet',
+        fake_path='data/test/diffusion_datasets/guided',
+        source='ojha2023',
+        family='diffusion',
+        generative_model='guided'
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/diffusion_datasets/ldm_100',
+        source='ojha2023',
+        family='diffusion',
+        generative_model='ldm_100'
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/diffusion_datasets/ldm_200',
+        source='ojha2023',
+        family='diffusion',
+        generative_model='ldm_200'
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/diffusion_datasets/ldm_200_cfg',
+        source='ojha2023',
+        family='diffusion',
+        generative_model='ldm_200_cfg'
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/glide/',  
+        source='synthbuster',
+        family='diffusion',
+        generative_model='glide',
+        order=1
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/dalle2/',
+        source='synthbuster',
+        family='diffusion',
+        generative_model='dalle2',
+        order=2
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/stable-diffusion-1-3/',  
+        source='synthbuster',
+        family='diffusion',
+        generative_model='stable-diffusion-1-3',
+        order=3
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/stable-diffusion-1-4/',  
+        source='synthbuster',
+        family='diffusion',
+        generative_model='stable-diffusion-1-4',
+        order=4
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/midjourney-v5/',  
+        source='synthbuster',
+        family='diffusion',
+        generative_model='midjourney-v5',
+        order=5
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/dalle3/',   
+        source='synthbuster',
+        family='diffusion',
+        generative_model='dalle3',
+        order=6
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/stable-diffusion-2/',  
+        source='synthbuster',
+        family='diffusion',
+        generative_model='stable-diffusion-2',
+        order=7
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/stable-diffusion-xl/',   
+        source='synthbuster',
+        family='diffusion',
+        generative_model='stable-diffusion-xl',
+        order=8
+    ),
+    dict(
+        real_path='data/test/synthbuster/raise',
+        fake_path='data/test/synthbuster/firefly/',  
+        source='synthbuster',
+        family='diffusion',
+        generative_model='firefly',
+        order=9
+    ),
+    # NEW
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/spai/flux/',  
+        source='karageorgiou2025',
+        family='flux',
+        generative_model='flux',
+        order=10
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/spai/gigagan/',  
+        source='karageorgiou2025',
+        family='gan',
+        generative_model='gigagan',
+        order=11
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/spai/midjourney-v6.1/',  
+        source='karageorgiou2025',
+        family='diffusion',
+        generative_model='midjourney-v6.1',
+        order=12
+    ),
+    dict(
+        real_path='data/test/diffusion_datasets/laion',
+        fake_path='data/test/spai/stable-diffusion-3/',  
+        source='karageorgiou2025',
+        family='diffusion',
+        generative_model='stable-diffusion-3',
+        order=13
     ),
 ]
 
@@ -298,7 +291,7 @@ LGRAD_DATASET_PATHS = [
         generative_model='stargan'
     ),
     dict(
-        real_path='data/test/tylegan',    
+        real_path='data/test/stylegan',    
         fake_path='data/test/stylegan',
         source='wang2020',
         family='gan', # Unconditional GAN
