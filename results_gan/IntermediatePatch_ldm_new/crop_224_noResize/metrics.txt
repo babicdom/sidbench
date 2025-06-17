@@ -1,0 +1,4 @@
+Generative            ACC
+Model                    
+------------------------
+gan based           74.12        85.43        82.89

@@ -144,7 +144,6 @@ def validate(model, loader, device, dataset_length, find_threshold=False, opt=No
                     # predictions = model.predict(*img)
                 else:
                     img = img.to(device) 
-
                 if opt.modelName == 'IntermediatePatch' or opt.modelName == 'SigLIPIntermediate' or opt.modelName == 'WindowIntermediatePacth' or opt.modelName == 'WindowedSigLIPIntermediate':
                     predictions = model.predict(img, p=opt.p, method=opt.method, window_slide=opt.window_slide)
                 else:

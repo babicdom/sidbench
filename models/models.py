@@ -72,6 +72,13 @@ MODELS = [
     #     "desc": "_latent_diffusion"
     # },
     # {
+    #     "modelName": "Rine",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/rine_original/model_allclasses_trainable.pth",
+    #     "ncls": "allclasses",
+    #     "desc": "_all_classes",
+    # },
+    # {
     #     "modelName": "RPTC",
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/rptc/RPTC.pth"
@@ -98,27 +105,41 @@ MODELS = [
     # },
     # {
     #     "modelName": "SPAI",
-    #     "trainedOn": "progan",
+    #     "trainedOn": "ldm",
     #     "ckpt": "./weights/spai/spai.pth"
+    # },
+    # {
+    #     "modelName": "SPAI",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/spai/train.pth",
+    #     "experiment": "./weights/spai/experiment.json",
+    #     "desc": "_progan",
     # },
     # {
     #     "modelName": "CLIPformer",
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/CLIPformer/train.pth"
     # },
-    {
-        "modelName": "IntermediatePatch",
-        "trainedOn": "progan",
-        "ckpt": "./weights/IntermediatePatch/train_progan.pth",
-        "experiment": "./weights/IntermediatePatch/experiment_progan.json",
-        # "desc": "_max",
-    },
+    # {
+    #     "modelName": "IntermediatePatch",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/IntermediatePatch/train_progan.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_progan.json",
+    #     # "desc": "_max",
+    # },
     # {
     #     "modelName": "IntermediatePatch",
     #     "trainedOn": "ldm",
     #     "ckpt": "./weights/IntermediatePatch/train_ldm.pth",
-    #     "experiment": "./weights/IntermediatePatch/experiment_ldm.pickle",
-    #     "desc": "_ldm",
+    #     "experiment": "./weights/IntermediatePatch/experiment_ldm.json",
+    #     "desc": "_ldm_new_p_3",
+    # },
+    # {
+    #     "modelName": "IntermediatePatch",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/IntermediatePatch/train_4_class.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_4_class.json",
+    #     "desc": "_4_class",
     # },
     # {
     #     "modelName": "AttentionIntermediatePatch",
@@ -132,8 +153,15 @@ MODELS = [
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/IntermediatePatch/train_siglip.pth",
     #     "experiment": "./weights/IntermediatePatch/experiment_siglip.json",
-    #     # "desc": "_p_3"
+    #     "desc": "_p_5"
     # },
+    {
+        "modelName": "SigLIPIntermediate",
+        "trainedOn": "ldm",
+        "ckpt": "./weights/IntermediatePatch/train_siglip_ldm.pth",
+        "experiment": "./weights/IntermediatePatch/experiment_siglip_ldm.json",
+        "desc": "_ldm",
+    },
     # {
     #     "modelName": "WindowIntermediatePacth",
     #     "trainedOn": "progan",
@@ -145,6 +173,20 @@ MODELS = [
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/IntermediatePatch/train_siglip.pth",
     #     "experiment": "./weights/IntermediatePatch/experiment_siglip.json",
+    # },
+    # {
+    #     "modelName": "WindowIntermediatePacth",
+    #     "trainedOn": "ldm",
+    #     "ckpt": "./weights/IntermediatePatch/train_ldm.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_ldm.json",
+    #     "desc": "_ldm",
+    # },
+    # {
+    #     "modelName": "WindowedSigLIPIntermediate",
+    #     "trainedOn": "ldm",
+    #     "ckpt": "./weights/IntermediatePatch/train_siglip_ldm.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_siglip_ldm.json",
+    #     "desc": "_ldm",
     # },
 ]
 

@@ -73,7 +73,7 @@ def calculate_performance_metrics(y_true, y_pred, find_threshold=False):
     metrics['oracle_threshold'] = calculate_for_threshold(y_true, y_pred, metrics['best_threshold'])
 
     print(f"ACC@0.5 / AP / AUC: {metrics['threshold_05']['acc']*100:1.2f} / {metrics['ap']*100:1.2f} / {metrics['roc_auc']*100:1.2f}")
-    print(f"TPR / TNR / TPR@95%TNR: {metrics['oracle_threshold']['tpr']*100:1.2f} / {metrics['oracle_threshold']['tnr']*100:1.2f} / {metrics['threshold_real_acc_095']['tpr']*100:1.2f}")
+    print(f"TPR / TNR / TPR@95%TNR: {metrics['threshold_05']['tpr']*100:1.2f} / {metrics['threshold_05']['tnr']*100:1.2f} / {metrics['threshold_real_acc_095']['tpr']*100:1.2f}")
 
     return metrics
 

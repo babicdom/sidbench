@@ -162,7 +162,7 @@ class SigLIPIntermediate(nn.Module):
             p = kwargs.get("p", 1)
             method = kwargs.get("method", "mean")
             if kwargs.get("window_slide", False):
-                stride = kwargs.get("stride", 112)
+                stride = kwargs.get("stride", 128)
                 if isinstance(x, list):
                     o = []
                     for xi in x: 

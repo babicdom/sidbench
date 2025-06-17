@@ -400,9 +400,11 @@ class PatchBasedMFViT(nn.Module):
 
         :param ckpt: Path to the checkpoint file.
         """
-        checkpoint = torch.load(ckpt, map_location='cpu', weights_only=False)
-        ckpt_model = checkpoint['model']
-        self.load_state_dict(ckpt_model, strict=False)
+        # checkpoint = torch.load(ckpt, map_location='cpu', weights_only=False)
+        # ckpt_model = checkpoint['model']
+        # self.load_state_dict(ckpt_model, strict=False)
+        checkpoint = torch.load(ckpt, map_location='cpu', weights_only=True)
+        self.load_state_dict(checkpoint, strict=False)
 
 
 class MFViT(nn.Module):
@@ -553,9 +555,11 @@ class MFViT(nn.Module):
 
         :param ckpt: Path to the checkpoint file.
         """
-        checkpoint = torch.load(ckpt, map_location='cpu', weights_only=False)
-        ckpt_model = checkpoint['model']
-        self.load_state_dict(ckpt_model, strict=False)
+        # checkpoint = torch.load(ckpt, map_location='cpu', weights_only=False)
+        # ckpt_model = checkpoint['model']
+        # self.load_state_dict(ckpt_model, strict=False)
+        checkpoint = torch.load(ckpt, map_location='cpu', weights_only=True)
+        self.load_state_dict(checkpoint, strict=False)
 
 
 class FrequencyRestorationEstimator(nn.Module):

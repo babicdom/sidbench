@@ -93,5 +93,6 @@ class RineModel(nn.Module):
         
     def load_weights(self, ckpt):
         state_dict = torch.load(ckpt, map_location='cpu')
-        for name in state_dict:
-            exec(f'self.{name.replace(".", "[", 1).replace(".", "].", 1)} = torch.nn.Parameter(state_dict["{name}"])')
+        # for name in state_dict:
+        #     exec(f'self.{name.replace(".", "[", 1).replace(".", "].", 1)} = torch.nn.Parameter(state_dict["{name}"])')
+        self.load_state_dict(state_dict, strict=False)
