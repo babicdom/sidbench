@@ -411,7 +411,7 @@ def processing(img, opt, label, image_path):
     if opt.modelName == 'NPR':
         return resnet_processing(img, opt), label, image_path
     
-    if opt.modelName == 'Rine':
+    if opt.modelName == 'Rine' and not opt.window_slide:
         return clip_processing(img, opt), label, image_path
 
     if opt.modelName == 'FreqDetect':
@@ -435,7 +435,7 @@ def processing(img, opt, label, image_path):
     if opt.modelName == 'SigLIPIntermediate':
         return siglip_processing(img, opt), label, image_path
     
-    if opt.modelName == "WindowIntermediatePacth" or opt.modelName == "WindowedSigLIPIntermediate":
+    if opt.modelName == "WindowIntermediatePacth" or opt.modelName == "WindowedSigLIPIntermediate" or opt.window_slide:
         return window_processing(img, opt), label, image_path
 
     

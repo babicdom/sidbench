@@ -1,4 +1,4 @@
 Generative            TNR          TPR             
 Model             (Reals)        Fakes     Accuracy
 ------------------------------------------------
-gan based           35.39        95.00        66.13
+gan based           52.18        87.92        70.61

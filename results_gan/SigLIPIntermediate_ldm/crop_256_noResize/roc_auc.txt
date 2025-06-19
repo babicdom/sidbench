@@ -1,4 +1,4 @@
 Generative            AUC
 Model                    
 ------------------------
-gan based           83.56
+gan based           83.37

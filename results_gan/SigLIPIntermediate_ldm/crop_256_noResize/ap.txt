@@ -1,4 +1,4 @@
 Generative        Average
 Model           Precision
 ------------------------
-gan based           85.58
+gan based           85.25

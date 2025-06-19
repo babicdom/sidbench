@@ -128,6 +128,9 @@ def get_model(opt):
         elif ncls == "allclasses":
             nproj = 2
             proj_dim = 1024
+        
+        if opt.window_slide:
+            opt.cropSize = None
         model = RineModel(backbone=("ViT-L/14", 1024), nproj=nproj, proj_dim=proj_dim)
     elif model_name == 'SPAI':
         opt.cropSize = None

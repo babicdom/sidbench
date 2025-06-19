@@ -1,4 +1,4 @@
 Generative        Average
 Model           Precision
 ------------------------
-ldm based           97.54
+ldm based           97.64

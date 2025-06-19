@@ -64,20 +64,20 @@ MODELS = [
     #     "ncls": "4class",
     #     "desc": "_4_class"
     # },
-    # {
-    #     "modelName": "Rine",
-    #     "trainedOn": "latent_diffusion",
-    #     "ckpt": "./weights/rine_original/model_ldm_trainable.pth",
-    #     "ncls": "ldm",
-    #     "desc": "_latent_diffusion"
-    # },
-    # {
-    #     "modelName": "Rine",
-    #     "trainedOn": "progan",
-    #     "ckpt": "./weights/rine_original/model_allclasses_trainable.pth",
-    #     "ncls": "allclasses",
-    #     "desc": "_all_classes",
-    # },
+    {
+        "modelName": "Rine",
+        "trainedOn": "latent_diffusion",
+        "ckpt": "./weights/rine_original/model_ldm_trainable.pth",
+        "ncls": "ldm",
+        "desc": "_latent_diffusion"
+    },
+    {
+        "modelName": "Rine",
+        "trainedOn": "progan",
+        "ckpt": "./weights/rine_original/model_allclasses_trainable.pth",
+        "ncls": "allclasses",
+        "desc": "_all_classes",
+    },
     # {
     #     "modelName": "RPTC",
     #     "trainedOn": "progan",
@@ -153,15 +153,22 @@ MODELS = [
     #     "trainedOn": "progan",
     #     "ckpt": "./weights/IntermediatePatch/train_siglip.pth",
     #     "experiment": "./weights/IntermediatePatch/experiment_siglip.json",
-    #     "desc": "_p_5"
+    #     # "desc": "_p_5"
     # },
-    {
-        "modelName": "SigLIPIntermediate",
-        "trainedOn": "ldm",
-        "ckpt": "./weights/IntermediatePatch/train_siglip_ldm.pth",
-        "experiment": "./weights/IntermediatePatch/experiment_siglip_ldm.json",
-        "desc": "_ldm",
-    },
+    # {
+    #     "modelName": "SigLIPIntermediate",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/IntermediatePatch/train_siglip_2.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_siglip_2.json",
+    #     "desc": "_2_1024"
+    # },
+    # {
+    #     "modelName": "SigLIPIntermediate",
+    #     "trainedOn": "ldm",
+    #     "ckpt": "./weights/IntermediatePatch/train_siglip_ldm.pth",
+    #     "experiment": "./weights/IntermediatePatch/experiment_siglip_ldm.json",
+    #     "desc": "_ldm",
+    # },
     # {
     #     "modelName": "WindowIntermediatePacth",
     #     "trainedOn": "progan",

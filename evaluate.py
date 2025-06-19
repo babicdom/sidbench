@@ -146,8 +146,11 @@ def validate(model, loader, device, dataset_length, find_threshold=False, opt=No
                     img = img.to(device) 
                 if opt.modelName == 'IntermediatePatch' or opt.modelName == 'SigLIPIntermediate' or opt.modelName == 'WindowIntermediatePacth' or opt.modelName == 'WindowedSigLIPIntermediate':
                     predictions = model.predict(img, p=opt.p, method=opt.method, window_slide=opt.window_slide)
+                elif opt.modelName == 'Rine' and opt.window_slide:
+                    predictions = model.predict(img, window_slide=opt.window_slide)
                 else:
                     predictions = model.predict(img)
+                predictions = np.atleast_1d(predictions)
                 y_pred.extend(predictions)
                 y_true.extend(label.flatten().tolist())
                 
@@ -186,7 +189,7 @@ def run_for_model(datasets, model, opt):
 
     if opt.modelName == 'Fusing':
         collate_fn = patch_collate 
-    elif opt.modelName == 'SPAI' or opt.modelName == 'WindowIntermediatePacth' or opt.modelName == 'WindowedSigLIPIntermediate':
+    elif opt.modelName == 'SPAI' or opt.modelName == 'WindowIntermediatePacth' or opt.modelName == 'WindowedSigLIPIntermediate' or opt.window_slide:
         collate_fn = image_enlisting_collate_fn
     else:
         collate_fn = None

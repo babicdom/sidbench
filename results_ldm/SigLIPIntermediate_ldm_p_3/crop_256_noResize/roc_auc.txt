@@ -1,0 +1,4 @@
+Generative            AUC
+Model                    
+------------------------
+ldm based           87.22
