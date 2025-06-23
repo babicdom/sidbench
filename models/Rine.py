@@ -88,31 +88,48 @@ class RineModel(nn.Module):
 
         return p, z
 
-    def forward_slide(self, img, stride=112, crop_size=224):
+    def forward_slide(self, img, stride=112, crop_size=224, batch_size=64):
         """Inference by sliding-window with overlap.
         If h_crop > h_img or w_crop > w_img, the small patch will be used to
         decode without padding.
         """
-        h_img, w_img = img.shape[-2:]
-        h_crop, w_crop = crop_size, crop_size
-        h_stride, w_stride = stride, stride
+        if type(img) == list:
+            img = img[0].unsqueeze(0)
+        if type(stride) == int:
+            stride = (stride, stride)
+        if type(crop_size) == int:
+            crop_size = (crop_size, crop_size)
 
-        if h_crop > h_img or w_crop > w_img:
-            h_crop, w_crop = min(h_crop, h_img), min(w_crop, w_img)
-            h_stride, w_stride = 1, 1
+        h_stride, w_stride = stride
+        h_crop, w_crop = crop_size
+        batch_size, _, h_img, w_img = img.shape
 
-        patches = []
-        for i in range(0, h_img - h_crop + 1, h_stride):
-            for j in range(0, w_img - w_crop + 1, w_stride):
-                patch = img[:, :, i:i + h_crop, j:j + w_crop]
-                patch = transforms.Normalize(mean=[0.48145466, 0.4578275, 0.40821073],
-                                             std=[0.26862954, 0.26130258, 0.27577711])(patch)
-                patches.append(patch)
+        h_grids = max(h_img - h_crop + h_stride - 1, 0) // h_stride + 1
+        w_grids = max(w_img - w_crop + w_stride - 1, 0) // w_stride + 1
 
-        patches = torch.concat(patches, dim=0)
-        logits, _ = self.forward(patches)
+        imgs = []
+        for h_idx in range(h_grids):
+            for w_idx in range(w_grids):
+                y1 = h_idx * h_stride
+                x1 = w_idx * w_stride
+                y2 = min(y1 + h_crop, h_img)
+                x2 = min(x1 + w_crop, w_img)
+                y1 = max(y2 - h_crop, 0)
+                x1 = max(x2 - w_crop, 0)
 
-        return logits.sigmoid().mean(dim=0).view(-1, 1)
+                crop_img = img[:, :, y1:y2, x1:x2]
+                crop_img = transforms.Normalize(
+                    mean=(0.48145466, 0.4578275, 0.40821073),
+                    std=(0.26862954, 0.26130258, 0.27577711),
+                )(crop_img)
+                imgs.append(crop_img)
+        imgs = torch.cat(imgs, dim=0)
+        logits = []
+        for i in range(0, imgs.shape[0], batch_size):
+            batch_imgs = imgs[i:i + batch_size]
+            logits_i, _ = self.forward(batch_imgs)
+            logits.append(logits_i)
+        return torch.cat(logits, dim=0).sigmoid().mean()
     
 
     def predict(self, img, **kwargs):

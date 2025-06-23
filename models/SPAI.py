@@ -403,7 +403,13 @@ class PatchBasedMFViT(nn.Module):
         # checkpoint = torch.load(ckpt, map_location='cpu', weights_only=False)
         # ckpt_model = checkpoint['model']
         # self.load_state_dict(ckpt_model, strict=False)
-        checkpoint = torch.load(ckpt, map_location='cpu', weights_only=True)
+        checkpoint = torch.load(ckpt, map_location='cpu', weights_only=False)
+        if 'model' in checkpoint:
+            checkpoint = checkpoint['model']
+        elif 'state_dict' in checkpoint:
+            checkpoint = checkpoint['state_dict']
+        else:
+            raise KeyError("Checkpoint does not contain 'model' or 'state_dict' key.")
         self.load_state_dict(checkpoint, strict=False)
 
 

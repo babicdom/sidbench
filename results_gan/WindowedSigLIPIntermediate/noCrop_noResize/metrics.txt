@@ -1,4 +1,4 @@
 Generative            ACC
 Model                    
 ------------------------
-gan based           93.18        98.49        98.25
+gan based           93.53        98.50        98.13

@@ -134,17 +134,10 @@ def get_model(opt):
         model = RineModel(backbone=("ViT-L/14", 1024), nproj=nproj, proj_dim=proj_dim)
     elif model_name == 'SPAI':
         opt.cropSize = None
-        if opt.desc is not None:
-            checkpoint = torch.load("./weights/spai/spai.pth", map_location='cpu', weights_only=False)
-            config = checkpoint["config"]
-            checkpoint = torch.load(opt.ckpt, map_location='cpu', weights_only=True)
-            model = build_mf_vit(config)
-            remap_pretrained_keys_vit(model, checkpoint)
-        else:
-            checkpoint = torch.load(opt.ckpt, map_location='cpu', weights_only=False)
-            config = checkpoint["config"]
-            model = build_mf_vit(config)
-            remap_pretrained_keys_vit(model, checkpoint["model"])
+        checkpoint = torch.load(opt.ckpt, map_location='cpu', weights_only=False)
+        config = checkpoint["config"]
+        model = build_mf_vit(config)
+        remap_pretrained_keys_vit(model, checkpoint["model"])
     elif model_name == 'CLIPformer':
         experiment = pickle.load(
             open(f"weights/CLIPformer/experiment.pickle", "rb")

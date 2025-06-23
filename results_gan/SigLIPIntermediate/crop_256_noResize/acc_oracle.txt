@@ -1,4 +1,4 @@
 Generative            TNR          TPR                      Best
 Model             (Reals)        Fakes     Accuracy    Threshold
 ------------------------------------------------------------
-gan based           93.61        91.16        92.35        0.636
+gan based           94.68        91.36        92.97        0.758

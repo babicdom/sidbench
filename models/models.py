@@ -64,20 +64,20 @@ MODELS = [
     #     "ncls": "4class",
     #     "desc": "_4_class"
     # },
-    {
-        "modelName": "Rine",
-        "trainedOn": "latent_diffusion",
-        "ckpt": "./weights/rine_original/model_ldm_trainable.pth",
-        "ncls": "ldm",
-        "desc": "_latent_diffusion"
-    },
-    {
-        "modelName": "Rine",
-        "trainedOn": "progan",
-        "ckpt": "./weights/rine_original/model_allclasses_trainable.pth",
-        "ncls": "allclasses",
-        "desc": "_all_classes",
-    },
+    # {
+    #     "modelName": "Rine",
+    #     "trainedOn": "latent_diffusion",
+    #     "ckpt": "./weights/rine_original/model_ldm_trainable.pth",
+    #     "ncls": "ldm",
+    #     "desc": "_latent_diffusion_window"
+    # },
+    # {
+    #     "modelName": "Rine",
+    #     "trainedOn": "progan",
+    #     "ckpt": "./weights/rine_original/model_allclasses_trainable.pth",
+    #     "ncls": "allclasses",
+    #     "desc": "_all_classes_window",
+    # },
     # {
     #     "modelName": "RPTC",
     #     "trainedOn": "progan",
@@ -108,13 +108,12 @@ MODELS = [
     #     "trainedOn": "ldm",
     #     "ckpt": "./weights/spai/spai.pth"
     # },
-    # {
-    #     "modelName": "SPAI",
-    #     "trainedOn": "progan",
-    #     "ckpt": "./weights/spai/train.pth",
-    #     "experiment": "./weights/spai/experiment.json",
-    #     "desc": "_progan",
-    # },
+     {
+         "modelName": "SPAI",
+         "trainedOn": "progan",
+         "ckpt": "./weights/spai/spai_progan.pth",
+         "desc": "_progan",
+    },
     # {
     #     "modelName": "CLIPformer",
     #     "trainedOn": "progan",
@@ -154,13 +153,6 @@ MODELS = [
     #     "ckpt": "./weights/IntermediatePatch/train_siglip.pth",
     #     "experiment": "./weights/IntermediatePatch/experiment_siglip.json",
     #     # "desc": "_p_5"
-    # },
-    # {
-    #     "modelName": "SigLIPIntermediate",
-    #     "trainedOn": "progan",
-    #     "ckpt": "./weights/IntermediatePatch/train_siglip_2.pth",
-    #     "experiment": "./weights/IntermediatePatch/experiment_siglip_2.json",
-    #     "desc": "_2_1024"
     # },
     # {
     #     "modelName": "SigLIPIntermediate",

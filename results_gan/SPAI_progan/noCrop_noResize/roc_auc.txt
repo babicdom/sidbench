@@ -1,0 +1,4 @@
+Generative            AUC
+Model                    
+------------------------
+gan based           85.10
