@@ -13,6 +13,7 @@ from models.DeFake import DeFake
 from models.SPAI import build_mf_vit, remap_pretrained_keys_vit
 from models.CLIPformer import CLIPformer, CLIPatch, IntermediatePatch, AttentionIntermediatePatch
 from models.SigLIPIntermediate import SigLIPIntermediate
+from models.GLIP import GLIP
 
 import re
 import torch
@@ -27,7 +28,7 @@ from utils.util import setup_device
 
 VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 
                 'NPR', 'Dire', 'DeFake', 'SPAI', 'CLIPformer', 'CLIPatch', 'IntermediatePatch', 'AttentionIntermediatePatch',
-                'SigLIPIntermediate', 'WindowIntermediatePacth', 'WindowedSigLIPIntermediate']
+                'SigLIPIntermediate', 'WindowIntermediatePacth', 'WindowedSigLIPIntermediate', 'GLIP']
 
 
 def get_model(opt):
@@ -199,6 +200,19 @@ def get_model(opt):
             device=device,
             nproj=experiment["nproj"],
             proj_dim=experiment["proj_dim"],
+        )
+    elif model_name == 'GLIP':
+        if opt.window_slide:
+            opt.cropSize = None
+            opt.desc += "_windowed"
+        experiment = json.load(
+            open(opt.experiment, "r")
+        )
+        model = GLIP(
+            backbone=experiment["backbone"],
+            nproj=experiment["nproj"],
+            proj_dim=experiment["proj_dim"],
+            device=device,
         )
     model.load_weights(ckpt=opt.ckpt)
     model.eval()

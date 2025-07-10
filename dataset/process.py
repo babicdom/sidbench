@@ -437,6 +437,12 @@ def processing(img, opt, label, image_path):
     
     if opt.modelName == "WindowIntermediatePacth" or opt.modelName == "WindowedSigLIPIntermediate" or opt.window_slide:
         return window_processing(img, opt), label, image_path
+    
+    if opt.modelName == 'GLIP':
+        if opt.window_slide:
+            return window_processing(img, opt), label, image_path
+        else:
+            return clip_processing(img, opt), label, image_path
 
     
     raise ValueError(f"Model {opt.modelName} not found")

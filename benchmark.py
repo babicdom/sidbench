@@ -101,6 +101,7 @@ if __name__ == '__main__':
             for dp in DATASET_PATHS
         ]
     print(f"Number of datasets: {len(datasets)}")
+    print(f"Options: {opt}")
 
     for model_params in MODELS:
         set_random_seed()

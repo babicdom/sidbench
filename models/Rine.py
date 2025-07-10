@@ -88,7 +88,7 @@ class RineModel(nn.Module):
 
         return p, z
 
-    def forward_slide(self, img, stride=112, crop_size=224, batch_size=64):
+    def forward_slide(self, img, stride=112, crop_size=224, batch_size_p=64):
         """Inference by sliding-window with overlap.
         If h_crop > h_img or w_crop > w_img, the small patch will be used to
         decode without padding.
@@ -125,8 +125,8 @@ class RineModel(nn.Module):
                 imgs.append(crop_img)
         imgs = torch.cat(imgs, dim=0)
         logits = []
-        for i in range(0, imgs.shape[0], batch_size):
-            batch_imgs = imgs[i:i + batch_size]
+        for i in range(0, imgs.shape[0], batch_size_p):
+            batch_imgs = imgs[i:i + batch_size_p]
             logits_i, _ = self.forward(batch_imgs)
             logits.append(logits_i)
         return torch.cat(logits, dim=0).sigmoid().mean()

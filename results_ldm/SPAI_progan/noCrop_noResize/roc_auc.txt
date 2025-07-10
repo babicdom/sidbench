@@ -1,4 +1,4 @@
 Generative            AUC
 Model                    
 ------------------------
-ldm based           64.75
+ldm based           65.48

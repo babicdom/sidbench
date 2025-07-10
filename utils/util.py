@@ -5,6 +5,7 @@ from typing import Optional, Iterable
 from PIL import Image
 import pathlib
 from matplotlib import colormaps
+from torchvision import transforms
 
 import numpy as np
 import random

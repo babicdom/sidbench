@@ -146,6 +146,9 @@ def validate(model, loader, device, dataset_length, find_threshold=False, opt=No
                     img = img.to(device) 
                 if opt.modelName == 'IntermediatePatch' or opt.modelName == 'SigLIPIntermediate' or opt.modelName == 'WindowIntermediatePacth' or opt.modelName == 'WindowedSigLIPIntermediate':
                     predictions = model.predict(img, p=opt.p, method=opt.method, window_slide=opt.window_slide)
+                elif 'GLIP' in opt.modelName:
+                    pbar.set_description(f"Running {opt.modelName} model with beta={opt.beta}")
+                    predictions = model.predict(img, window_slide=opt.window_slide, beta=opt.beta)
                 elif opt.modelName == 'Rine' and opt.window_slide:
                     predictions = model.predict(img, window_slide=opt.window_slide)
                 else:

@@ -91,7 +91,7 @@ class EvalOptions():
         parser.add_argument('--gaussianSigma', type=int, default=None, help="0,1,2,3,4.     Used to test robustness of our model. Not apply if None")
 
         parser.add_argument('--loadSize', type=int, default=None, help='scale images to this size')
-        parser.add_argument('--imgSize', type=int, default=256, help='Pad images to this size')
+        parser.add_argument('--imgSize', type=int, default=224, help='Pad images to this size')
         parser.add_argument('--cropSize', type=int, default=224, help='crop images to this size')
         parser.add_argument('--noResize', default=False, action='store_true')
         parser.add_argument('--noCrop', default=False, action='store_true')
@@ -135,7 +135,10 @@ class EvalOptions():
         # IP
         parser.add_argument('--window_slide', type=bool, default=False, help='Windowing of the Intermediate Patch.')
         parser.add_argument('--p', type=int, default=1, help='Scaling value for Generalized mean.')
-        parser.add_argument('--method', type=str, default='mean', help='Method for prediction agreggation.')
+        parser.add_argument('--method', type=str, default='mean', help='Method for prediction aggregation.')
+
+        # GLIP
+        parser.add_argument('--beta', type=float, default=0.5, help='Beta value for Global-Local weighting.')
 
         self.initialized = True
 

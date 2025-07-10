@@ -1,0 +1,4 @@
+Generative            ACC
+Model                    
+------------------------
+ldm based           89.39        98.62        91.96

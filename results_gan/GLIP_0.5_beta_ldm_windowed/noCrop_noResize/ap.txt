@@ -1,0 +1,4 @@
+Generative        Average
+Model           Precision
+------------------------
+gan based           83.09
